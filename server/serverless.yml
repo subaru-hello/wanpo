@@ -1,0 +1,45 @@
+service: serverless-example
+
+plugins:
+  - serverless-offline
+  - serverless-layers
+  - serverless-s3-remover
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  deploymentBucket:
+    name: '${self:custom.deploymentBucketName}'
+
+functions:
+  main:
+    handler: dist/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
+
+custom:
+  customDomain:
+    basePath: ''
+  serverless-offline:
+    httpPort: 3000
+    noPrependStageInUrl: true
+  deploymentBucketName: 'wanpo-server-layer'
+  serverless-layers:
+    packageManager: npm
+    dependenciesPath: ./package.json
+  emptyS3Bucket:
+    bucket: '${self:custom.deploymentBucketName}'
+
+# prevent too much node_module size
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - 'dist/**'
+    - 'prisma/**'
+    - '!node_modules/**'

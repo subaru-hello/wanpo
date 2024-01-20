@@ -1,0 +1,66 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "generated/client"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Todo {
+  id    String @id @default(uuid())
+  title String @db.VarChar(200)
+}
+
+model Dog {
+  id         String      @id @default(uuid())
+  nickname   String      @db.VarChar(50)
+  breedId    String
+  birthArea  String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  breed      DogBreed    @relation(fields: [breedId], references: [id])
+  diary      Diary[]
+  dogProfile DogProfile?
+
+  @@index([breedId])
+}
+
+model DogBreed {
+  id      String  @id @default(uuid())
+  name    String  @unique
+  country Country @default(JAPAN)
+  dogs    Dog[]
+
+  @@map("dogBreeds")
+}
+
+model DogProfile {
+  id        String   @id @default(uuid())
+  bio       String   @db.VarChar(200)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dogId     String   @unique
+  dog       Dog?     @relation(fields: [dogId], references: [id])
+
+  @@index([dogId])
+  @@map("dogProfile")
+}
+
+model Diary {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(100)
+  description String   @db.VarChar(1000)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  dogId       String   @unique
+  dog         Dog      @relation(fields: [dogId], references: [id])
+}
+
+enum Country {
+  JAPAN
+  FRANCE
+}
