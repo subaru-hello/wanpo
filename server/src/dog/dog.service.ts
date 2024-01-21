@@ -10,4 +10,12 @@ export class DogService {
     console.log('======dogs=====');
     return dogs;
   }
+
+  // create
+
+  // update
+
+  // show
+
+  // delete
 }

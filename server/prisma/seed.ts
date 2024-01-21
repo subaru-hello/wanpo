@@ -1,4 +1,4 @@
-import { Country, PrismaClient } from './generated/client';
+import { Country, PrismaClient } from '@Prisma/client';
 const prisma = new PrismaClient();
 async function main() {
   const dogBreeds = await prisma.dogBreed.createMany({

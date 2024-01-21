@@ -9,4 +9,12 @@ export class DogController {
   getDogs(): Promise<Dog[]> {
     return this.dogService.getDogs();
   }
+
+  // create
+
+  // update
+
+  // show
+
+  // delete
 }
