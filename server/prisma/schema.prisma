@@ -11,36 +11,42 @@ datasource db {
 }
 
 model DogOwner {
-  id          String  @id @default(uuid())
-  name        String
-  email String
-  cognitoSub String
-  contactInfo String?
-  dogs        Dog[]
+  id            String    @id @default(uuid())
+  name          String
+  email         String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  unregisterdAt DateTime?
+  cognitoSub    String
+  contactInfo   String?
+  dogs          Dog[]
 }
 
 model Dog {
-  id         String      @id @default(uuid())
-  nickname   String      @db.VarChar(50)
-  breedId    String
-  birthArea  String
-  birthdate  DateTime?
-  ownerId    String
-  owner      DogOwner    @relation(fields: [ownerId], references: [id])
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  breed      DogBreed    @relation(fields: [breedId], references: [id])
-  diaries    Diary[]
-  dogProfile DogProfile?
+  id            String      @id @default(uuid())
+  nickname      String      @db.VarChar(50)
+  breedId       String
+  birthArea     String
+  birthdate     DateTime?
+  ownerId       String
+  owner         DogOwner    @relation(fields: [ownerId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  unregisterdAt DateTime?
+  breed         DogBreed    @relation(fields: [breedId], references: [id])
+  diaries       Diary[]
+  dogProfile    DogProfile?
 
   @@index([breedId, ownerId])
 }
 
 model DogBreed {
-  id      String  @id @default(uuid())
-  name    String  @unique
-  country Country @default(JAPAN)
-  dogs    Dog[]
+  id        String   @id @default(uuid())
+  name      String   @unique
+  country   Country  @default(JAPAN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dogs      Dog[]
 
   @@map("dogBreeds")
 }
@@ -58,23 +64,27 @@ model DogProfile {
 }
 
 model Diary {
-  id          String      @id @default(uuid())
-  title       String      @db.VarChar(100)
-  description String      @db.VarChar(1000)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  dogId       String      @unique
-  dog         Dog         @relation(fields: [dogId], references: [id])
-  entries     WalkEntry[]
+  id            String      @id @default(uuid())
+  title         String      @db.VarChar(100)
+  description   String      @db.VarChar(1000)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  unregisterdAt DateTime?
+  dogId         String      @unique
+  dog           Dog         @relation(fields: [dogId], references: [id])
+  entries       WalkEntry[]
 }
 
 model WalkEntry {
-  id       String   @id @default(uuid())
-  date     DateTime
-  distance Float?
-  duration Int? // 散歩の時間（分）
-  diaryId  String
-  diary    Diary    @relation(fields: [diaryId], references: [id])
+  id            String    @id @default(uuid())
+  date          DateTime
+  stepCount      Float?
+  duration      Int? // 散歩の時間（分）
+  diaryId       String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  unregisterdAt DateTime?
+  diary         Diary     @relation(fields: [diaryId], references: [id])
 
   @@index([diaryId])
 }

@@ -4,8 +4,9 @@ import { AppService } from './app.service';
 import { DiaryModule } from './diary/diary.module';
 import { DogModule } from './dog/dog.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { WalkEntryModule } from './walk-entry/walk-entry.module';
 @Module({
-  imports: [DiaryModule, DogModule, PrismaModule],
+  imports: [DiaryModule, DogModule, PrismaModule, WalkEntryModule],
   controllers: [AppController],
   providers: [AppService],
 })
