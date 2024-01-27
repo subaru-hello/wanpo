@@ -1,7 +1,9 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 
+// Statelessは状態をPropsかGlobalStateからしか受け取れない
 class BigCard extends StatelessWidget {
+  // stateを受け取る時はthis.でアクセスする。
   const BigCard({
     super.key,
     required this.pair,
