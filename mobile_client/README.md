@@ -2,15 +2,15 @@
 
 A new Flutter project.
 
-## Getting Started
+## Directory Structure
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+lib/main.dart: Entry point
+lib/src/screens/: Contains individual screen widgets. Organize them based on app sections or features.
+lib/src/widgets/: Custom reusable widgets used across different screens.
+lib/src/models/: Data models and classes that define wanpo data structure.
+lib/src/services/: APIs, data fetching, and business logic.
+lib/utils/: Utility functions, helpers, or constants that are shared across the app.
+assets/: Images, fonts, and other static assets.
+themes/: Custom app themes and styles.
+routes/: Define named routes for navigation in your app.
+main_test.dart: Entry point for tests.
