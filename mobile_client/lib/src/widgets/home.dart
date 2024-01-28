@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/app_state.dart';
+import '../contexts/app_state.dart';
 import 'big_card.dart';
+import 'favorite_page.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,22 +15,13 @@ class _HomeState extends State<Home> {
   var selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
-    var pair = appState.current;
-
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
     Widget page;
     switch (selectedIndex) {
       case 0:
         page = GeneratorPage();
         break;
       case 1:
-        page = Placeholder();
+        page = FavoritePage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');

@@ -5,6 +5,9 @@ class AppState extends ChangeNotifier {
   // 変数を定義
   var current = WordPair.random();
   var favorites = <WordPair>[];
+  // Use a getter for wordCombined
+  List<String> get wordCombined =>
+      favorites.map((favo) => "${favo.first} ${favo.second}").toList();
 
   // メソッド
   void getNext() {
