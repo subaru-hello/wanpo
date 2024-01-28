@@ -14,3 +14,10 @@ assets/: Images, fonts, and other static assets.
 themes/: Custom app themes and styles.
 routes/: Define named routes for navigation in your app.
 main_test.dart: Entry point for tests.
+
+### palete
+
+背景: 白 (#FFFFFF) または ライトグレー (#D3D3D3)
+テキスト: グレー (#808080) または 白 (#FFFFFF)（暗い背景上）
+ボタン / アクセント: ピンク (#FFC0CB)、ダークピンク (#FF69B4)
+アイコン / ボーダー: グレー (#808080) または ライトグレー (#D3D3D3)
