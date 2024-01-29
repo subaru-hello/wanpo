@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_client/src/widgets/walk_entry.dart';
 import 'package:provider/provider.dart';
 
 import '../contexts/app_state.dart';
@@ -23,6 +24,9 @@ class _HomeState extends State<Home> {
       case 1:
         page = FavoritePage();
         break;
+      case 2:
+        page = WalkEntryPage();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -35,7 +39,9 @@ class _HomeState extends State<Home> {
               NavigationRailDestination(
                   icon: Icon(Icons.home), label: Text("home")),
               NavigationRailDestination(
-                  icon: Icon(Icons.favorite), label: Text("Favorites"))
+                  icon: Icon(Icons.favorite), label: Text("Favorites")),
+              NavigationRailDestination(
+                  icon: Icon(Icons.book), label: Text("散歩日誌"))
             ],
             selectedIndex: selectedIndex,
             onDestinationSelected: (value) {
