@@ -15,21 +15,27 @@ async function main() {
   // DogOwnerのシードデータを追加
   const superDogTamer = await prisma.dogOwner.create({
     data: {
-      name: 'Super Dog Tamer',
       email: 'test@example.com',
-      password: 'example',
       cognitoSub: 'asdfgh-qwer3ty-zxcvb-6yhjm',
-      contactInfo: '123-456-7890',
+      dogOwnerProfile: {
+        create: {
+          name: 'Super Dog Tamer',
+          contactInfo: '123-456-7890',
+        },
+      },
     },
   });
 
   const taro = await prisma.dogOwner.create({
     data: {
-      name: 'Super Taro',
       email: 'taro@example.com',
-      password: 'example',
       cognitoSub: 'asdfgh-qwer3ty-zxcvb-6yhjm',
-      contactInfo: '122-456-7890',
+      dogOwnerProfile: {
+        create: {
+          contactInfo: '122-456-7890',
+          name: 'Super Taro',
+        },
+      },
     },
   });
 
@@ -47,11 +53,14 @@ async function main() {
       data: {
         nickname: 'Wazzy',
         birthArea: 'Kumamoto',
-        ownerId: superDogTamer.id,
-        breedId: bichon.id,
-        dogProfile: {
-          create: {
-            bio: '白くて人懐っこいキュートなビションちゃん',
+        owner: {
+          connect: {
+            dogOwnerId: superDogTamer.id,
+          },
+        },
+        breed: {
+          connect: {
+            id: bichon.id,
           },
         },
       },
@@ -61,11 +70,14 @@ async function main() {
       data: {
         nickname: 'Tama',
         birthArea: 'Kanagawa',
-        ownerId: taro.id,
-        breedId: poodle.id,
-        dogProfile: {
-          create: {
-            bio: '茶色くてクリクリした目が特徴のトイプードルちゃん',
+        owner: {
+          connect: {
+            dogOwnerId: taro.id,
+          },
+        },
+        breed: {
+          connect: {
+            id: poodle.id,
           },
         },
       },
