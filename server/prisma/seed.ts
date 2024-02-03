@@ -17,6 +17,7 @@ async function main() {
     data: {
       name: 'Super Dog Tamer',
       email: 'test@example.com',
+      password: 'example',
       cognitoSub: 'asdfgh-qwer3ty-zxcvb-6yhjm',
       contactInfo: '123-456-7890',
     },
@@ -26,6 +27,7 @@ async function main() {
     data: {
       name: 'Super Taro',
       email: 'taro@example.com',
+      password: 'example',
       cognitoSub: 'asdfgh-qwer3ty-zxcvb-6yhjm',
       contactInfo: '122-456-7890',
     },
