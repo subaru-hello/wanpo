@@ -7,10 +7,12 @@ import {
   Patch,
   Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { WalkEntryService } from './walk-entry.service';
 import { WalkEntry } from '@Prisma/client';
 import { CreateWalkEntryDto, UpdateWalkEntryDto } from './dto';
+import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
 
 @Controller('walk-entries')
 export class WalkEntryController {
@@ -20,20 +22,20 @@ export class WalkEntryController {
     return this.walkEntryService.getWalkEntries();
   }
   // create
+  @UseGuards(JwtAuthGuard)
   @Post()
   async registerWalkEntries(
     @Body() params: CreateWalkEntryDto,
   ): Promise<String> {
-    console.log('sssssssss', params);
     return this.walkEntryService.registerWalkEntry(params);
   }
   // update
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   updateOneWalkEntry(
     @Param('id') id: string,
     @Body() params: UpdateWalkEntryDto,
   ): Promise<String> {
-    console.log('===', params);
     return this.walkEntryService.updateOneWalkEntry(id, params);
   }
   // show
@@ -42,6 +44,7 @@ export class WalkEntryController {
     return this.walkEntryService.getOneWalkEntry(id);
   }
   // delete
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   unregisterWalkEntry(@Param('id') id: string): Promise<String> {
     return this.walkEntryService.unregisterWalkEntry(id);
