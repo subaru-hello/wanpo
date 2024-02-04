@@ -21,6 +21,8 @@ import { APP_GUARD } from '@nestjs/core';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    // Throttle guard
+    // {"statusCode":429,"message":"ThrottlerException: Too Many Requests"}%
     ThrottlerModule.forRoot([
       {
         name: 'short',
