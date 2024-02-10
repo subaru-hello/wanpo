@@ -10,6 +10,7 @@ import { DogOwnersModule } from './dog-owners/dog-owners.module';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { DogProfileImageModule } from './dog/dogProfileImage/dog-profile-image.module';
 @Module({
   imports: [
     DiaryModule,
@@ -18,6 +19,7 @@ import { APP_GUARD } from '@nestjs/core';
     WalkEntryModule,
     AuthModule,
     DogOwnersModule,
+    DogProfileImageModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
