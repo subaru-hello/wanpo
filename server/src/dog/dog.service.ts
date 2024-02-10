@@ -44,7 +44,8 @@ export class DogService {
     if (!id) {
       return 'NO_PARAM_ID';
     }
-    const { birthdate, breedId, ownerId } = params;
+
+    const { birthdate, breedId, ownerId, profileImagePath } = params;
     const dog = await this.prisma.dog.update({
       where: {
         id: id,
@@ -56,6 +57,7 @@ export class DogService {
             id: breedId,
           },
         },
+        profile_image_path: profileImagePath ?? undefined,
         owner: ownerId && {
           connect: {
             id: ownerId,

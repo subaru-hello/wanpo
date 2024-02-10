@@ -11,6 +11,7 @@ export class CreateDogDto {
   breedId: string;
 
   ownerId: string;
+  profileImage?: string;
 }
 
 export class UpdateDogDto {
@@ -20,7 +21,9 @@ export class UpdateDogDto {
 
   birthdate?: string;
 
-  breedId: string;
+  breedId?: string;
 
-  ownerId: string;
+  ownerId?: string;
+
+  profileImagePath?: string;
 }
