@@ -21,75 +21,72 @@ model DogOwner {
 }
 
 model Dog {
-  id                 String          @id @default(uuid())
-  nickname           String          @db.VarChar(50)
-  breedId            String
-  birthArea          String
-  birthdate          DateTime?
-  ownerProfileId     String
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
-  unregisterdAt      DateTime?
-  profile_image_path String?
-  owner              DogOwnerProfile @relation(fields: [ownerProfileId], references: [id])
-  breed              DogBreed        @relation(fields: [breedId], references: [id])
-  diaries            Diary[]
+  id               String          @id @default(uuid())
+  nickname         String          @db.VarChar(50)
+  breedId          String
+  birthArea        String
+  birthdate        DateTime?
+  ownerProfileId   String
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  unregisterdAt    DateTime?
+  profileImagePath String?
+  owner            DogOwnerProfile @relation(fields: [ownerProfileId], references: [id])
+  breed            DogBreed        @relation(fields: [breedId], references: [id])
+  diaries          Diary[]
 
   @@index([breedId, ownerProfileId])
 }
 
 model DogBreed {
-  id                 String   @id @default(uuid())
-  name               String   @unique
-  country            Country  @default(JAPAN)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  profile_image_path String?
-  dogs               Dog[]
-
-  @@map("dogBreeds")
+  id               String   @id @default(uuid())
+  name             String   @unique
+  country          Country  @default(JAPAN)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  profileImagePath String?
+  dogs             Dog[]
 }
 
 model DogOwnerProfile {
-  id                 String   @id @default(uuid())
-  name               String
-  bio                String?  @db.VarChar(200)
-  profile_image_path String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  dogOwnerId         String   @unique
-  contactInfo        String?
-  dogOnwer           DogOwner @relation(fields: [dogOwnerId], references: [id])
-  dogs               Dog[]
+  id               String   @id @default(uuid())
+  name             String
+  bio              String?  @db.VarChar(200)
+  profileImagePath String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  dogOwnerId       String   @unique
+  contactInfo      String?
+  dogOnwer         DogOwner @relation(fields: [dogOwnerId], references: [id])
+  dogs             Dog[]
 
   @@index([dogOwnerId])
-  @@map("dogProfile")
 }
 
 model Diary {
-  id               String      @id @default(uuid())
-  title            String      @db.VarChar(100)
-  description      String      @db.VarChar(1000)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  unregisterdAt    DateTime?
-  dogId            String      @unique
-  cover_image_path String?
-  dog              Dog         @relation(fields: [dogId], references: [id])
-  entries          WalkEntry[]
+  id             String      @id @default(uuid())
+  title          String      @db.VarChar(100)
+  description    String      @db.VarChar(1000)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  unregisterdAt  DateTime?
+  dogId          String      @unique
+  coverImagePath String?
+  dog            Dog         @relation(fields: [dogId], references: [id])
+  entries        WalkEntry[]
 }
 
 model WalkEntry {
-  id                 String    @id @default(uuid())
-  date               DateTime
-  stepCount          Float?
-  duration           Int?
-  diaryId            String
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  unregisterdAt      DateTime?
-  summary_image_path String?
-  diary              Diary     @relation(fields: [diaryId], references: [id])
+  id               String    @id @default(uuid())
+  date             DateTime
+  stepCount        Float?
+  duration         Int?
+  diaryId          String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  unregisterdAt    DateTime?
+  summaryImagePath String?
+  diary            Diary     @relation(fields: [diaryId], references: [id])
 
   @@index([diaryId])
 }
