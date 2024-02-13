@@ -77,21 +77,52 @@ model Diary {
 }
 
 model WalkEntry {
-  id               String    @id @default(uuid())
+  id               String      @id @default(uuid())
+  title            String      @default("")
   date             DateTime
   stepCount        Float?
   duration         Int?
   diaryId          String
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
   unregisterdAt    DateTime?
   summaryImagePath String?
-  diary            Diary     @relation(fields: [diaryId], references: [id])
+  diary            Diary       @relation(fields: [diaryId], references: [id])
+  excraments       Excrement[]
 
   @@index([diaryId])
+}
+
+model Excrement {
+  id                 String          @id @default(uuid())
+  count              Int?            @default(0)
+  type               ExcrementType   @default(PIPI)
+  size               ExcrementSize   @default(SHORT)
+  volume             ExcrementVolume @default(DROP)
+  excramentImagePath String?
+  walkEntryId        String
+  walkEntry          WalkEntry       @relation(fields: [walkEntryId], references: [id])
+
+  @@index([walkEntryId])
 }
 
 enum Country {
   JAPAN
   FRANCE
+}
+
+enum ExcrementType {
+  PIPI
+  CACA
+}
+
+enum ExcrementSize {
+  LARGE
+  MEDIUM
+  SHORT
+}
+
+enum ExcrementVolume {
+  WATERFALL
+  DROP
 }
