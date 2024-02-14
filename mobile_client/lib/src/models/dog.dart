@@ -31,7 +31,6 @@ class Dog {
         birthDate: json['birthDate'],
         profileImagePath: json['profileImagePath']);
   }
-  // Method to convert a Dog instance to a Map
   Map<String, dynamic> toJson() {
     return {
       'id': id,

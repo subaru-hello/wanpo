@@ -40,7 +40,6 @@ class Diary {
         unregisterdAt: json['unregisterdAt'],
         dogId: json['dogId']);
   }
-  // Method to convert a Diary instance to a Map
   Map<String, dynamic> toJson() {
     return {
       'id': id,

@@ -29,11 +29,9 @@ class WalkEntry {
       this.summaryImagePath,
       required this.diary});
 
-  // Getter for createdAt
   DateTime get getCreatedAt => createdAt;
   String? get getSummaryImagePath => summaryImagePath;
 
-  // Getter for duration
   int get getDuration => duration;
 
   factory WalkEntry.fromJson(Map<String, dynamic> json) {
@@ -51,9 +49,7 @@ class WalkEntry {
       diaryId: json['diaryId'] ?? '',
       diary: json['diary'] != null
           ? Diary.fromJson(json['diary'] as Map<String, dynamic>)
-          : Diary
-              .defaultDiary(), // Assuming a safe default or initial factory constructor for Diary
-
+          : Diary.defaultDiary(), // 初期値を設定
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       unregisterdAt: json['unregisterdAt'] != null
@@ -62,7 +58,7 @@ class WalkEntry {
     );
   }
 
-  // A method to convert a WalkEntry instance to a Map
+  //  WalkEntryインスタンスをMapに変換
   Map<String, dynamic> toJson() {
     return {
       'id': id,
