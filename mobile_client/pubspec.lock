@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  buffer:
+    dependency: transitive
+    description:
+      name: buffer
+      sha256: "94f60815065a8f0fd4f05be51faf86cf86519327e039d5c2aac72e1d1cc1dad4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2"
   characters:
     dependency: transitive
     description:
@@ -41,6 +49,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  convert:
+    dependency: transitive
+    description:
+      name: convert
+      sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.1"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
   english_words:
     dependency: "direct main"
     description:
@@ -87,10 +111,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: a2bbf9d017fcced29139daa8ed2bba4ece450ab222871df93ca9eec6f80c34ba
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "0.13.6"
   http_parser:
     dependency: transitive
     description:
@@ -99,6 +123,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.18.1"
   lints:
     dependency: transitive
     description:
@@ -131,6 +163,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  mime:
+    dependency: transitive
+    description:
+      name: mime
+      sha256: "2e123074287cc9fd6c09de8336dae606d1ddb88d9ac47358826db698c176a1f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
+  minio_new:
+    dependency: "direct main"
+    description:
+      name: minio_new
+      sha256: f7fd883ee2458a7a02e00d8e095584961b78ae94742078c332d553f9ee7e1f58
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   nested:
     dependency: transitive
     description:
@@ -147,6 +195,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      sha256: c15605cd28af66339f8eb6fbe0e541bfe2d1b72d5825efc6598f3e0a31b9ad27
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.2"
   provider:
     dependency: "direct main"
     description:
@@ -232,6 +288,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      sha256: b015a8ad1c488f66851d762d3090a21c600e479dc75e68328c52774040cf9226
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.0"
 sdks:
   dart: ">=3.2.0 <4.0.0"
   flutter: ">=1.16.0"
