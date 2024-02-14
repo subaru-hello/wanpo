@@ -5,6 +5,7 @@ import '../contexts/app_state.dart';
 class FavoritePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // App stateを呼び出している
     var appState = context.watch<AppState>();
     if (appState.favorites.isEmpty) {
       return Center(
