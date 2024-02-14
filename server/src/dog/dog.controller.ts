@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { DogService } from './dog.service';
 import { Dog } from '@Prisma/client';
-import { CreateDogDto, UpdateDogDto } from './dto/createDogDto';
+import { CreateDogDto, UpdateDogDto } from './dto/create-dog.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
 

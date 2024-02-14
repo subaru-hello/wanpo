@@ -3,9 +3,10 @@ import { PrismaClient } from '@Prisma/client';
 async function main() {
   const prisma = new PrismaClient();
 
-  const owners = await prisma.dogOwnerProfile.findMany({
+  const ownerProfile = await prisma.dogOwnerProfile.findMany({
     include: {
       dogs: true,
+      dogOnwer: true,
     },
   });
   const dogs = await prisma.dog.findMany();
@@ -13,7 +14,7 @@ async function main() {
   const diaries = await prisma.diary.findMany();
   console.log(
     'owners',
-    owners,
+    ownerProfile,
     'breed:',
     dogBreeds,
     'diaries:',

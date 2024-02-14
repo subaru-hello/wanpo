@@ -14,19 +14,20 @@ export class WalkEntryService {
   constructor(private readonly prisma: PrismaService) {}
   async getWalkEntries(): Promise<WalkEntry[]> {
     const walkEntries = await this.prisma.walkEntry.findMany();
-    console.log('======walkEntrys=====');
+    console.log('======walkEntrys=====', walkEntries);
     return walkEntries;
   }
 
   // create
   //   正しいパラメータじゃ無い場合error codeを返す
   async registerWalkEntry(params: CreateWalkEntryDto): Promise<String> {
-    const { stepCount, duration, diaryId, date } = params;
+    const { stepCount, duration, diaryId, date, summaryImagePath } = params;
     const walkEntry = await this.prisma.walkEntry.create({
       data: {
         stepCount: stepCount && Number(stepCount),
         duration: duration && Number(duration),
         date: date && new Date(date),
+        summaryImagePath: summaryImagePath && summaryImagePath,
         diary: diaryId && {
           connect: { id: diaryId },
         },

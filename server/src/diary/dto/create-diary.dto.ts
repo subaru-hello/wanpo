@@ -1,6 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-
-export class UpdateDiaryDto {
+export class CreateDiaryDto {
   @IsNotEmpty()
   title: string;
 
@@ -9,4 +8,6 @@ export class UpdateDiaryDto {
   unregisterdAt?: string;
 
   dogId: string;
+
+  coverImagePath: string;
 }

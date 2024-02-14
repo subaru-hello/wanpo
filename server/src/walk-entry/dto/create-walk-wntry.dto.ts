@@ -12,4 +12,5 @@ export class CreateWalkEntryDto {
   duration?: number;
 
   diaryId: string;
+  summaryImagePath?: string;
 }

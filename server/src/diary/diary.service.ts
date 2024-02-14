@@ -12,19 +12,13 @@ export class DiaryService {
   // create
   //   正しいパラメータじゃ無い場合error codeを返す
   async registerDiary(params: CreateDiaryDto): Promise<String> {
-    // title: string;
-
-    // description: string;
-
-    // unregisterdAt?: string;
-
-    // dogId: string;
-    const { title, description, unregisterdAt, dogId } = params;
+    const { title, description, unregisterdAt, dogId, coverImagePath } = params;
     const diary = await this.prisma.diary.create({
       data: {
         title,
         description,
         unregisterdAt: unregisterdAt && new Date(unregisterdAt),
+        coverImagePath: coverImagePath && coverImagePath,
         dog: dogId && {
           connect: { id: dogId },
         },
@@ -39,15 +33,17 @@ export class DiaryService {
   }
   // update
   async updateOneDiary(id: string, params: UpdateDiaryDto): Promise<String> {
-    const { title, description, unregisterdAt, dogId } = params;
+    const { title, description, unregisterdAt, dogId, coverImagePath } = params;
     if (!id) {
       return 'ID_REQUIRED';
     }
+    console.log(params);
     const diary = await this.prisma.diary.update({
       where: { id },
       data: {
         title,
         description,
+        coverImagePath: coverImagePath && coverImagePath,
         unregisterdAt: unregisterdAt && new Date(unregisterdAt),
         dog: dogId && {
           connect: { id: dogId },

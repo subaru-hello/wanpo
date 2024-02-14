@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Dog } from '@Prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateDogDto, UpdateDogDto } from './dto/createDogDto';
+import { CreateDogDto, UpdateDogDto } from './dto/create-dog.dto';
 
 @Injectable()
 export class DogService {
@@ -57,7 +57,7 @@ export class DogService {
             id: breedId,
           },
         },
-        profile_image_path: profileImagePath ?? undefined,
+        profileImagePath: profileImagePath ?? undefined,
         owner: ownerId && {
           connect: {
             id: ownerId,

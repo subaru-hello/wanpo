@@ -45,6 +45,7 @@ export class AuthController {
   }
   @Post('authenticate')
   async authenticate(@Body() authenticateRequest: AuthenticateRequestDto) {
+    console.log('–––––');
     try {
       return await this.authService.authenticate(authenticateRequest);
     } catch (e) {

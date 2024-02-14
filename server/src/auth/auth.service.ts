@@ -87,6 +87,7 @@ export class AuthService {
       Username: email,
       Pool: this.userPool,
     };
+    console.log('^^^^^^^^');
     const newUser = new CognitoUser(userData);
     return new Promise((resolve, reject) => {
       return newUser.authenticateUser(authenticationDetails, {
