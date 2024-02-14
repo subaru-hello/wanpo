@@ -2,6 +2,7 @@ class Diary {
   String id;
   String title;
   String description;
+  String? coverImagePath;
   String createdAt;
   String updatedAt;
   String? unregisterdAt;
@@ -12,6 +13,7 @@ class Diary {
     required this.id,
     required this.title,
     required this.description,
+    required this.coverImagePath,
     required this.createdAt,
     required this.updatedAt,
     this.unregisterdAt,
@@ -23,6 +25,7 @@ class Diary {
   String get getDescription => description;
   String get getCreatedAt => createdAt;
   String get getUpdatedAt => updatedAt;
+  String? get getCoverImagePath => coverImagePath;
   String? get getUnregisterdAt => unregisterdAt;
   String get getDogId => dogId;
 
@@ -31,6 +34,7 @@ class Diary {
         id: json['id'],
         title: json['title'],
         description: json['description'],
+        coverImagePath: json['coverImagePath'],
         createdAt: json['createdAt'],
         updatedAt: json['updatedAt'],
         unregisterdAt: json['unregisterdAt'],
@@ -42,10 +46,29 @@ class Diary {
       'id': id,
       'title': title,
       'description': description,
+      'coverImagePath': coverImagePath,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'unregisterdAt': unregisterdAt,
       'dogId': dogId,
     };
+  }
+
+  static Diary defaultDiary() {
+    return Diary(
+      id: 'abafafbaf',
+      /* default values for other fields */
+      title: 'default title',
+      /* default values for other fields */
+      description: 'default description',
+      /* default values for other fields */
+      coverImagePath: 'default coverImagePath',
+      /* default values for other fields */
+      createdAt: 'default createdAt',
+      /* default values for other fields */
+      updatedAt: 'default updatedAt',
+      /* default values for other fields */
+      dogId: 'defaultdogId', /* default values for other fields */
+    );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'src/contexts/app_state.dart';
-import 'src/widgets/home.dart';
+import 'src/screens/home.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future main() async {
