@@ -39,7 +39,6 @@ class _ImageFromS3State extends State<ImageFromS3> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator(); // フェッチ中はローディング表示
             } else if (snapshot.hasError) {
-              // Get object length
               return Text('Error: ${snapshot.error}');
             } else if (snapshot.hasData) {
               // FIXME: 大きさ調節

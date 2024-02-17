@@ -12,7 +12,7 @@ class CustomDrawer extends StatelessWidget {
       child: ListView(
         children: <Widget>[
           DrawerHeader(
-            child: Text('ビション Today'),
+            child: Text('withビション'),
             decoration: BoxDecoration(
               color: Colors.amber,
             ),

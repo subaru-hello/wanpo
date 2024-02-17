@@ -1,6 +1,6 @@
 import { PrismaService } from '@Src/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { registerDogOwnerDto } from './dto/registerDogOwnerDto';
+import { registerDogOwnerDto } from './dto/register-dog-owner.dto';
 import { DogOwner } from '@Prisma/client';
 
 @Injectable()

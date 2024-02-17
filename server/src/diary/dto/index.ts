@@ -1,2 +1,2 @@
-export { UpdateDiaryDto } from './updateDiaryDto';
-export { CreateDiaryDto } from './createDiaryDto';
+export { UpdateDiaryDto } from './update-diary.dto';
+export { CreateDiaryDto } from './create-diary.dto';

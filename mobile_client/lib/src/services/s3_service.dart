@@ -6,7 +6,6 @@ import 'dart:typed_data';
 class S3Service {
   late final Minio minio;
 
-  // Adjust the constructor to automatically configure the service
   S3Service() {
     final accessKey = dotenv.env['AWS_ACCESS_KEY']!;
     final secretKey = dotenv.env['AWS_SECRET_KEY']!;
