@@ -15,6 +15,7 @@
     "@mantine/form": "^7.5.3",
     "@mantine/hooks": "^7.5.3",
     "@mantine/modals": "^7.5.3",
+    "@vercel/analytics": "^1.2.0",
     "dayjs": "^1.11.10",
     "next": "14.1.0",
     "react": "^18",

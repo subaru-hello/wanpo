@@ -1,7 +1,7 @@
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
-
+import { Analytics } from "@vercel/analytics/react";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 
 export const metadata = {
@@ -21,6 +21,7 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider>{children}</MantineProvider>
+        <Analytics />
       </body>
     </html>
   );
