@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Home Page'),
+          title: Text('with ビション'),
         ),
         // Drawerを追加
         drawer: CustomDrawer(

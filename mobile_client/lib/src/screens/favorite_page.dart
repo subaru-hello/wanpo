@@ -17,8 +17,8 @@ class FavoritePage extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.favorites.length} favorites:'),
+          child: Text('あなたがいいねした日誌は '
+              '${appState.favorites.length} 個です:'),
         ),
         for (var favo in appState.wordCombined)
           ListTile(

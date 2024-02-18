@@ -21,7 +21,7 @@ class WalkEntryContainer extends StatelessWidget {
             vertical: 16,
           ),
           decoration: const BoxDecoration(
-            color: Color(0xFF55C500), // ← 背景色を指定
+            color: Color.fromARGB(255, 246, 174, 49), // ← 背景色を指定
             borderRadius: BorderRadius.all(
               Radius.circular(32), // ← 角丸を設定
             ),
@@ -31,7 +31,7 @@ class WalkEntryContainer extends StatelessWidget {
               Text(
                 walkEntry.title,
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                // overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

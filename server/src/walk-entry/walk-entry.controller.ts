@@ -31,11 +31,12 @@ export class WalkEntryController {
   }
   // update
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
+  @Post(':id')
   updateOneWalkEntry(
     @Param('id') id: string,
     @Body() params: UpdateWalkEntryDto,
   ): Promise<String> {
+    console.log('--------', id);
     return this.walkEntryService.updateOneWalkEntry(id, params);
   }
   // show

@@ -45,10 +45,11 @@ export class WalkEntryService {
     id: string,
     params: UpdateWalkEntryDto,
   ): Promise<String> {
-    const { stepCount, duration, diaryId, date } = params;
+    const { stepCount, duration, diaryId, date, title } = params;
     const walkEntry = await this.prisma.walkEntry.update({
       where: { id },
       data: {
+        title: title ?? undefined,
         stepCount: stepCount && Number(stepCount),
         duration: duration && Number(duration),
         date: date && new Date(date),

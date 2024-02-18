@@ -9,4 +9,6 @@ export class UpdateWalkEntryDto {
   duration?: number;
 
   diaryId: string;
+
+  title?: string;
 }
