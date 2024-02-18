@@ -45,7 +45,7 @@ class WalkEntryContainer extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-              Text('Excrements:'),
+              Text('しっしとかっか:'),
               Column(
                 children: walkEntry.excrements
                     .map((excrement) => Text(
