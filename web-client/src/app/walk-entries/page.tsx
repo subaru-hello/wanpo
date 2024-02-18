@@ -1,6 +1,5 @@
 import { WalkEntryCard } from "@/components/organisms/WalkEntryCard";
 import { Flex } from "@mantine/core";
-
 async function getWalkEntries(): Promise<WalkEntry[]> {
   const apiUrl = process.env.API_URL ?? "";
   const res = await fetch(`${apiUrl}/walk-entries`);
@@ -40,9 +39,10 @@ export default async function Page() {
         {walkEntries &&
           walkEntries.map((walkEntry) => (
             <WalkEntryCard
+              key={walkEntry.id}
               alt="test alt"
-              src="https://picsum.photos/id/237/200/300"
-              height={160}
+              src="../waji-nikotama.jpeg"
+              height={400}
               title={walkEntry.title}
               date={walkEntry.date}
               duaration={walkEntry.duration}
