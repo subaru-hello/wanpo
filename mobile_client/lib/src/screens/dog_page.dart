@@ -47,7 +47,7 @@ class _DogPageState extends State<DogPage> {
           padding: const EdgeInsets.all(20),
           child: Text('わんちゃん'),
         ),
-        ElevatedButton(onPressed: fetchDogAndSet, child: Text('取得する')),
+        // ElevatedButton(onPressed: fetchDogAndSet, child: Text('取得する')),
         if (dogs.isEmpty)
           Text('わんちゃんがいません')
         else
@@ -56,7 +56,6 @@ class _DogPageState extends State<DogPage> {
                     Text(dog.nickname),
                     Column(
                       children: [
-                        Center(child: Text("画像")),
                         SizedBox(
                           height: 200,
                           child: ImageFromS3(imagePath: dog.profileImagePath),

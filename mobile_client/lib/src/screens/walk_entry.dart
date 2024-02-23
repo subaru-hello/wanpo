@@ -61,7 +61,7 @@ class _WalkEntryPageState extends State<WalkEntryPage> {
           padding: const EdgeInsets.all(20),
           child: Text('散歩記録一覧'),
         ),
-        ElevatedButton(onPressed: fetchDogAndSet, child: Text('取得する')),
+        // ElevatedButton(onPressed: fetchDogAndSet, child: Text('取得する')),
         if (walkEntries.isEmpty)
           Text('散歩記録がありません')
         else

@@ -46,7 +46,7 @@ class _DiaryPageState extends State<DiaryPage> {
           padding: const EdgeInsets.all(20),
           child: Text('日記'),
         ),
-        ElevatedButton(onPressed: fetchDiaryAndSet, child: Text('取得する')),
+        // ElevatedButton(onPressed: fetchDiaryAndSet, child: Text('取得する')),
         if (diaries.isEmpty)
           Text('日記がありません')
         else
@@ -55,7 +55,6 @@ class _DiaryPageState extends State<DiaryPage> {
                     Text(diary.description),
                     Column(
                       children: [
-                        Center(child: Text("画像")),
                         SizedBox(
                           height: 200,
                           child: ImageFromS3(imagePath: diary.coverImagePath),
