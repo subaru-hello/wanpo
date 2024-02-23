@@ -1,6 +1,3 @@
-import { WalkEntryCard } from "@/components/organisms/WalkEntryCard";
-import { FC } from "react";
-
 // 枠組みのように使う
 const WalkEntriesLayout = async ({
   children, // will be a page or nested layout

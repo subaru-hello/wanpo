@@ -1,7 +1,7 @@
 "use client";
 import { Card, Image, Text, Button, Group } from "@mantine/core";
 import { FC } from "react";
-import { CoreButton } from "../atoms/Button";
+// import { CoreButton } from "../atoms/Button";
 
 type Props = {
   src: string;
@@ -26,7 +26,7 @@ export const WalkEntryCard: FC<Props> = (props) => {
     stepCount,
     summaryImagePath,
   } = props;
-  const onClick = () => console.log("=====clicked===");
+  // const onClick = () => console.log("=====clicked===");
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -51,7 +51,7 @@ export const WalkEntryCard: FC<Props> = (props) => {
       <Text size="sm" c="dimmed">
         {stepCount}歩
       </Text>
-      <CoreButton
+      {/* <CoreButton
         color="blue"
         disabled={false}
         loading={false}
@@ -60,7 +60,7 @@ export const WalkEntryCard: FC<Props> = (props) => {
         mt="md"
         radius="md"
         text="詳細"
-      />
+      /> */}
     </Card>
   );
 };

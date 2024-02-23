@@ -1,3 +1,4 @@
+import { FooterCentered } from "@/components/organisms/Footer";
 import { HeroContentLeft } from "@/components/organisms/HeroWallPaper";
 import Link from "next/link";
 
@@ -7,7 +8,6 @@ export default function Home() {
       {/* header */}
       {/* sWaiper section */}
       <HeroContentLeft />
-      {/* footer */}
     </main>
   );
 }

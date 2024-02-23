@@ -188,7 +188,7 @@ export default function Page() {
           <h2 className="font-weight-bold subtitle-1">事業者の氏名</h2>
           <div style={{ marginLeft: "20px" }}>
             <div className="word-wrap mb-2" style={{ whiteSpace: "pre-wrap" }}>
-              中野 昴
+              Subaru Nakano
             </div>
           </div>
         </div>
