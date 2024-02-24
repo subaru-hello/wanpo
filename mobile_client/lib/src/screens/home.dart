@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_client/src/contexts/navigator_contexts.dart';
+import 'package:mobile_client/src/screens/contact.dart';
 import 'package:mobile_client/src/screens/diary/diary_page.dart';
 import 'package:mobile_client/src/screens/dog_page.dart';
+import 'package:mobile_client/src/screens/privacy_policy.dart';
 import 'package:mobile_client/src/widgets/bottom_navigation_bar.dart';
 import 'package:mobile_client/src/widgets/drawer.dart';
 import 'package:mobile_client/src/screens/word_generator_page.dart';
 import 'package:mobile_client/src/screens/walk_entry.dart';
+import 'package:provider/provider.dart';
 
 import 'favorite_page.dart';
 
@@ -16,45 +20,47 @@ class Home extends StatefulWidget {
 enum NavigationSource { drawer, bottomNavigation }
 
 class _HomeState extends State<Home> {
-  var selectedBottomNavigationIndex = 0;
-  var selectedDrawerIndex = 0;
+  var selectedTabName = "wordGenerator";
   NavigationSource lastNavigationSource = NavigationSource.drawer;
   Widget _getPageWidget() {
-    int index;
+    String tabName;
     switch (lastNavigationSource) {
       case NavigationSource.drawer:
-        index = selectedDrawerIndex;
       case NavigationSource.bottomNavigation:
-        index = selectedBottomNavigationIndex;
+        tabName = selectedTabName;
     }
 
-    switch (index) {
-      case 0:
+    switch (tabName) {
+      case "wordGenerator":
         return WordGeneratorPage();
-      case 1:
+      case "favorite":
         return FavoritePage();
-      case 2:
+      case "walkEntry":
         return WalkEntryPage();
-      case 3:
+      case "diary":
         return DiaryPage();
-      case 4:
+      case "dog":
         return DogPage();
+      case "contact":
+        return ContactPage();
+      case "privacyPolicy":
+        return PrivacyPolicyPage();
       default:
-        throw UnimplementedError('No widget for index $index');
+        throw UnimplementedError('No widget for tabName $tabName');
     }
   }
 
-  void _onSelectDrawerItem(int index, BuildContext context) {
+  void _onSelectDrawerItem(String tabName, BuildContext context) {
     setState(() {
-      selectedDrawerIndex = index;
+      selectedTabName = tabName;
       lastNavigationSource = NavigationSource.drawer;
     });
     Navigator.pop(context); // Drawerを閉じる
   }
 
-  void _onSelectBottomNavItem(int index) {
+  void _onSelectBottomNavItem(String tabName) {
     setState(() {
-      selectedBottomNavigationIndex = index;
+      selectedTabName = tabName;
       lastNavigationSource = NavigationSource.bottomNavigation;
     });
   }
@@ -62,32 +68,35 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     Widget page = _getPageWidget();
-    return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('with ビション'),
-        ),
-        // Drawerを追加
-        drawer: CustomDrawer(
-          onSelectDrawerItem: (index) {
-            _onSelectDrawerItem(index, context);
-          },
-        ),
-        body: Row(children: [
-          Expanded(
-            child: Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: page, // 現在選択されているページを表示
+    return ChangeNotifierProvider<NavigatorNotifierState>(
+        // Create an instance of NavigatorNotifierState
+        create: (context) => NavigatorNotifierState(),
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Icon(Icons.pets),
             ),
-          ),
-        ]),
-        bottomNavigationBar: CustomBottomNavigationBar(
-          currentIndex: selectedBottomNavigationIndex,
-          onSelectNavItem: (index) {
-            _onSelectBottomNavItem(index);
-          },
-        ),
-      );
-    });
+            // Drawerを追加
+            drawer: CustomDrawer(
+              onSelectDrawerItem: (tabName) {
+                _onSelectDrawerItem(tabName, context);
+              },
+            ),
+            body: Row(children: [
+              Expanded(
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: page, // 現在選択されているページを表示
+                ),
+              ),
+            ]),
+            bottomNavigationBar: CustomBottomNavigationBar(
+              // currntIndex: selectedBottomNavigationIndex,
+              onSelectNavItem: (tabName) {
+                _onSelectBottomNavItem(tabName);
+              },
+            ),
+          );
+        }));
   }
 }

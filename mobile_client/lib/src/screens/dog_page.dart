@@ -45,7 +45,7 @@ class _DogPageState extends State<DogPage> {
       children: [
         Padding(
           padding: const EdgeInsets.all(20),
-          child: Text('わんちゃん'),
+          child: Text('わんちゃん一覧'),
         ),
         // ElevatedButton(onPressed: fetchDogAndSet, child: Text('取得する')),
         if (dogs.isEmpty)

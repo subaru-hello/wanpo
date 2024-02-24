@@ -9,7 +9,7 @@ class FavoritePage extends StatelessWidget {
     var appState = context.watch<AppState>();
     if (appState.favorites.isEmpty) {
       return Center(
-        child: Text('No favorites yet.'),
+        child: Text('いいねをした日誌がありません'),
       );
     }
 

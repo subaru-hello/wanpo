@@ -17,6 +17,8 @@ dependencies:
   flutter_dotenv: ^5.1.0
   minio_new: ^1.0.2
   intl: ^0.18.1
+  url_launcher: ^6.2.5
+  font_awesome_flutter: ^10.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
