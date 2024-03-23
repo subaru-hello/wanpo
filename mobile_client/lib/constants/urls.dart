@@ -18,4 +18,5 @@ Uri buildUri(String path) {
 // 関数を呼び出して結果を変数に格納
 final Uri walkEntryUrl = buildUri("walk-entries");
 final Uri diaryUrl = buildUri("diaries");
+final Uri loginUrl = buildUri("auth/login");
 final Uri dogUrl = buildUri("dogs");
