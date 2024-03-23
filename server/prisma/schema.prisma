@@ -6,8 +6,8 @@ generator client {
 
 datasource db {
   provider     = "postgresql"
-  url               = env("DATABASE_URL")
-  directUrl         = env("DIRECT_URL")
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
   relationMode = "prisma"
 }
 
@@ -19,24 +19,31 @@ model DogOwner {
   unregisterdAt   DateTime?
   cognitoSub      String
   dogOwnerProfile DogOwnerProfile?
+  dogs            Dog[]
 }
 
 model Dog {
-  id               String          @id @default(uuid())
-  nickname         String          @db.VarChar(50)
-  breedId          String
-  birthArea        String
-  birthdate        DateTime?
-  ownerProfileId   String
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  unregisterdAt    DateTime?
-  profileImagePath String?
-  owner            DogOwnerProfile @relation(fields: [ownerProfileId], references: [id])
-  breed            DogBreed        @relation(fields: [breedId], references: [id])
-  diaries          Diary[]
+  id        String    @id @default(uuid())
+  nickname  String    @db.VarChar(50)
+  breedId   String
+  birthArea String
+  birthdate DateTime?
 
-  @@index([breedId, ownerProfileId])
+  ownerId           String? 
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  unregisterdAt     DateTime?
+  profileImagePath  String?
+  owner             DogOwner?         @relation(fields: [ownerId], references: [id])
+  breed             DogBreed         @relation(fields: [breedId], references: [id])
+  diaries           Diary[]
+  DogOwnerProfile   DogOwnerProfile? @relation(fields: [dogOwnerProfileId], references: [id])
+  dogOwnerProfileId String?
+
+  @@index([ownerId]) // ownerIdのための単一のインデックス
+  @@index([breedId]) // breedIdのための単一のインデックス
+  @@index([dogOwnerProfileId])
+  @@index([breedId, ownerId]) // 複合インデックス
 }
 
 model DogBreed {

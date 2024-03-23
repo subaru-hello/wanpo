@@ -55,7 +55,7 @@ async function main() {
         birthArea: 'Kumamoto',
         owner: {
           connect: {
-            dogOwnerId: superDogTamer.id,
+            id: superDogTamer.id,
           },
         },
         breed: {
@@ -72,7 +72,7 @@ async function main() {
         birthArea: 'Kanagawa',
         owner: {
           connect: {
-            dogOwnerId: taro.id,
+            id: taro.id,
           },
         },
         breed: {
