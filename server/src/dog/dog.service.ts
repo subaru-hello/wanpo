@@ -8,7 +8,17 @@ export class DogService {
   constructor(private readonly prisma: PrismaService) {}
   async getDogs(): Promise<Dog[]> {
     const dogs = await this.prisma.dog.findMany();
-    console.log('======dogs=====');
+    return dogs;
+  }
+  async getOwnedDogs(cognitoSub?: string): Promise<Dog[]> {
+    const dogs = await this.prisma.dog.findMany({
+      where: {
+        owner: {
+          cognitoSub: cognitoSub && cognitoSub,
+        },
+      },
+    });
+    console.log('dogs', dogs);
     return dogs;
   }
 

@@ -3,9 +3,12 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Patch,
   Post,
+  Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { DogService } from './dog.service';
@@ -13,6 +16,8 @@ import { Dog } from '@Prisma/client';
 import { CreateDogDto, UpdateDogDto } from './dto/create-dog.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
+import { Request, Response } from 'express';
+import { getCognitoSubFromCookie } from '@Src/auth/utils/httpUtils';
 
 @Controller('dogs')
 export class DogController {
@@ -24,11 +29,19 @@ export class DogController {
   getDogs(): Promise<Dog[]> {
     return this.dogService.getDogs();
   }
+  @Get('owned-dogs')
+  async getOwnedDogs(
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response<Promise<Dog[]>>> {
+    const cognitoSub = getCognitoSubFromCookie(req) ?? undefined;
+    const dogs = await this.dogService.getOwnedDogs(cognitoSub);
+    return res.status(HttpStatus.OK).json({ dogs });
+  }
   // create
   @UseGuards(JwtAuthGuard)
   @Post()
   async registerDogs(@Body() params: CreateDogDto): Promise<String> {
-    console.log('sssssssss', params);
     return this.dogService.registerDog(params);
   }
   // update
@@ -38,7 +51,6 @@ export class DogController {
     @Param('id') id: string,
     @Body() params: UpdateDogDto,
   ): Promise<String> {
-    console.log('===', params);
     return this.dogService.updateOneDog(id, params);
   }
   // show

@@ -24,6 +24,7 @@ export class DiaryController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async registerDiaries(@Body() params: CreateDiaryDto): Promise<String> {
+    console.log('=====', params);
     return this.diaryService.registerDiary(params);
   }
   // update
