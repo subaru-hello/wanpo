@@ -9,12 +9,18 @@ export class JwtAuthGuard implements CanActivate {
     clientId: process.env.COGNITO_CLIENT_ID,
     scope: 'aws.cognito.signin.user.admin',
   });
+
+  // JWTとリクエストCookieに含まれるjwtTokenが一致していないとエンドポイントを叩けない
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
+    console.log('====request===', request);
+    const jwtToken = request.cookies?.jwtToken;
+    console.log('Authorization:', request.headers.authorization);
+    console.log('JwtToken:', request.cookies?.jwtToken);
+    // const token = request.cookies['jwtToken']; // Cookieからトークンを取得
+    // if (!token) return false; // トークンがなければアクセス拒否
     try {
-      const result = await this.jwtVerifier.verify(
-        request.header('authorization'),
-      );
+      const result = await this.jwtVerifier.verify(jwtToken);
       console.log('jwt verified res', result);
       return !!result;
     } catch (error) {

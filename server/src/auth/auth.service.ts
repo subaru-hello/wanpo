@@ -4,6 +4,7 @@ import {
   CognitoUser,
   CognitoUserAttribute,
   CognitoUserPool,
+  CognitoUserSession,
 } from 'amazon-cognito-identity-js';
 import { ConfigService } from '@nestjs/config';
 import { SignUpRequestDto } from './dto/signup-request.dto';
@@ -12,6 +13,7 @@ import { AuthenticateRequestDto } from './dto/authenticate-request.dto';
 import { VeirfyRequestDto } from './dto/verify-request.dto';
 import { ChangePasswordRequestDto } from './dto/change-password-request.dto';
 import { ForgotPasswordRequestDto } from './dto/forgot-password-request.dto';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable()
 export class AuthService {
@@ -76,38 +78,53 @@ export class AuthService {
     });
   }
 
-  // 認証に成功したら、JWTを含むjsonが返る
+  // 認証に成功したら、JWTを含むjsonを返す
   async authenticate(user: AuthenticateRequestDto) {
     const { email, password } = user;
-    const authenticationDetails = new AuthenticationDetails({
-      Username: email,
-      Password: password,
-    });
-    const userData = {
-      Username: email,
-      Pool: this.userPool,
-    };
-    console.log('^^^^^^^^');
-    const newUser = new CognitoUser(userData);
+    try {
+      const authenticationDetails = new AuthenticationDetails({
+        Username: email,
+        Password: password,
+      });
+
+      const userData = {
+        Username: email,
+        Pool: this.userPool,
+      };
+      const newUser = new CognitoUser(userData);
+      const result = await AuthService.authenticateUser(
+        newUser,
+        authenticationDetails,
+      );
+
+      // セッション管理に必要な情報を抽出
+      const jwtToken = result.getAccessToken().getJwtToken();
+      const refreshToken = result.getRefreshToken().getToken();
+      const decodedJwtToken = jwtDecode(jwtToken); // Ensure jwtDecode is defined or imported
+      const userSub = decodedJwtToken.sub;
+
+      console.log('end');
+      return {
+        jwtToken,
+        refreshToken: refreshToken,
+        userSub,
+      };
+    } catch (err) {
+      console.error('Authentication error:', err);
+      throw err;
+    }
+  }
+
+  private static authenticateUser(
+    newUser: CognitoUser,
+    authenticationDetails: AuthenticationDetails,
+  ): Promise<CognitoUserSession> {
     return new Promise((resolve, reject) => {
-      return newUser.authenticateUser(authenticationDetails, {
-        // JWTとpayloadのみクライアントに返却
-        // JWTはクライアントのCookieにHttpOnlyで保存する
-        onSuccess: (result) => {
-          resolve(result.getAccessToken());
-        },
-        onFailure: (err) => {
-          reject(err);
-        },
-        newPasswordRequired: function (userAttributes, requireAttributes) {
-          var attributesData = {
-            name: email,
-          };
-          newUser.completeNewPasswordChallenge(
-            'Password1',
-            attributesData,
-            this,
-          );
+      newUser.authenticateUser(authenticationDetails, {
+        onSuccess: (result) => resolve(result),
+        onFailure: (err) => reject(err),
+        newPasswordRequired: function (userAttributes, requiredAttributes) {
+          console.log('New password required');
         },
       });
     });
@@ -184,7 +201,7 @@ export class AuthService {
     });
   }
   //今セッションを持っているユーザーがログイン中か
-  async loggedIn() {
+  loggedIn() {
     var cognitoUser = this.userPool.getCurrentUser();
     if (cognitoUser) {
       cognitoUser.getSession(function (err, session) {
@@ -192,12 +209,12 @@ export class AuthService {
           console.log('required to login');
           return false;
         }
-        console.log(session);
         cognitoUser.getUserAttributes(function (err, attributes) {
           if (err) {
+            console.log('failed to fetch user attributes');
             return false;
           } else {
-            console.log(attributes);
+            console.log('attribute', attributes);
           }
         });
       });
@@ -205,5 +222,23 @@ export class AuthService {
     } else {
       return false;
     }
+  }
+
+  async deleteCognitoUser({ email }: { email: string }) {
+    // cognitoUserPoolからユーザーを削除
+    const userData = {
+      Username: email,
+      Pool: this.userPool,
+    };
+    const cognitoUser = new CognitoUser(userData);
+    cognitoUser.deleteUser(function (err, attributes) {
+      if (err) {
+        console.log('deletion failed ', err);
+        return false;
+      } else {
+        console.log('delete succeeded', attributes);
+        return true;
+      }
+    });
   }
 }
