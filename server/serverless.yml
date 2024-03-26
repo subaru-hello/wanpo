@@ -10,7 +10,7 @@ provider:
   runtime: nodejs18.x
   deploymentBucket:
     name: '${self:custom.deploymentBucketName}'
-
+  # timeout: 30
 functions:
   main:
     handler: dist/main.handler
