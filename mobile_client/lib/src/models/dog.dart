@@ -3,6 +3,8 @@ class Dog {
   String nickname;
   String breedId;
   String birthArea;
+  String ownerId;
+  String? dogOwnerProfileId;
   DateTime? birthDate;
   String? profileImagePath;
 
@@ -12,6 +14,8 @@ class Dog {
       required this.nickname,
       required this.breedId,
       required this.birthArea,
+      required this.ownerId,
+      this.dogOwnerProfileId,
       this.birthDate,
       this.profileImagePath});
 
@@ -19,6 +23,8 @@ class Dog {
   String get getNickname => nickname;
   String get getBreedId => breedId;
   String get getBirthArea => birthArea;
+  String get getOwnerId => ownerId;
+  String? get getOwnerProfileId => dogOwnerProfileId;
   DateTime? get getBirthDate => birthDate;
   String? get getProfileImagePath => profileImagePath;
 
@@ -29,6 +35,8 @@ class Dog {
         breedId: json['breedId'],
         birthArea: json['birthArea'],
         birthDate: json['birthDate'],
+        ownerId: json['ownerId'],
+        dogOwnerProfileId: json['dogOwnerProfileId'],
         profileImagePath: json['profileImagePath']);
   }
   Map<String, dynamic> toJson() {
@@ -38,7 +46,17 @@ class Dog {
       'breedId': breedId,
       'birthArea': birthArea,
       'birthDate': birthDate,
+      'ownerId': ownerId,
+      'dogOwnerProfileId': dogOwnerProfileId,
       'profileImagePath': profileImagePath,
     };
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Dog && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

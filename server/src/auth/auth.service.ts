@@ -92,23 +92,29 @@ export class AuthService {
         Pool: this.userPool,
       };
       const newUser = new CognitoUser(userData);
-      const result = await AuthService.authenticateUser(
-        newUser,
-        authenticationDetails,
-      );
+      try {
+        const result = await AuthService.authenticateUser(
+          newUser,
+          authenticationDetails,
+        );
+        const jwtToken = result.getAccessToken().getJwtToken();
+        const refreshToken = result.getRefreshToken().getToken();
+        const decodedJwtToken = jwtDecode(jwtToken); // Ensure jwtDecode is defined or imported
+        const userSub = decodedJwtToken.sub;
 
+        console.log('end');
+        return {
+          jwtToken,
+          refreshToken: refreshToken,
+          userSub,
+        };
+        // 以降の処理...
+      } catch (err) {
+        console.error('Authentication error:', err);
+        // エラー処理...
+      }
+      console.log('aaaa');
       // セッション管理に必要な情報を抽出
-      const jwtToken = result.getAccessToken().getJwtToken();
-      const refreshToken = result.getRefreshToken().getToken();
-      const decodedJwtToken = jwtDecode(jwtToken); // Ensure jwtDecode is defined or imported
-      const userSub = decodedJwtToken.sub;
-
-      console.log('end');
-      return {
-        jwtToken,
-        refreshToken: refreshToken,
-        userSub,
-      };
     } catch (err) {
       console.error('Authentication error:', err);
       throw err;
@@ -122,9 +128,13 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       newUser.authenticateUser(authenticationDetails, {
         onSuccess: (result) => resolve(result),
-        onFailure: (err) => reject(err),
+        onFailure: (err) => {
+          console.log('Authentication failed', err);
+          reject(err);
+        },
         newPasswordRequired: function (userAttributes, requiredAttributes) {
           console.log('New password required');
+          // newPasswordRequiredに対する処理...
         },
       });
     });

@@ -20,3 +20,4 @@ final Uri walkEntryUrl = buildUri("walk-entries");
 final Uri diaryUrl = buildUri("diaries");
 final Uri loginUrl = buildUri("auth/login");
 final Uri dogUrl = buildUri("dogs");
+final Uri ownedDogUrl = buildUri("dogs/owned-dogs");

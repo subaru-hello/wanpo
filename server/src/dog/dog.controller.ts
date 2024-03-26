@@ -35,6 +35,7 @@ export class DogController {
     @Res() res: Response,
   ): Promise<Response<Promise<Dog[]>>> {
     const cognitoSub = getCognitoSubFromCookie(req) ?? undefined;
+    console.log('======', cognitoSub);
     const dogs = await this.dogService.getOwnedDogs(cognitoSub);
     return res.status(HttpStatus.OK).json({ dogs });
   }

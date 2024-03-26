@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile_client/src/api/diary_api.dart';
@@ -16,6 +14,8 @@ class DiaryCreatePage extends StatefulWidget {
 class _DiaryCreateState extends State<DiaryCreatePage> {
   String title = "";
   String description = "";
+  Dog? selectedDog;
+  List<Dog>? dogs;
   final storage = FlutterSecureStorage();
   late Future<String> userSub;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -23,11 +23,25 @@ class _DiaryCreateState extends State<DiaryCreatePage> {
   @override
   void initState() {
     super.initState();
+    // 初回ローディング時に犬のリストを取得する
+    getDogs().then((dogsList) {
+      setState(() {
+        dogs = dogsList;
+      });
+    });
   }
 
   void _handleTitleSaved(String value) {
     setState(() {
       title = value;
+    });
+  }
+
+  void _handleDogSaved(Dog dog) {
+    print('dog');
+    print(dog.id);
+    setState(() {
+      selectedDog = dog;
     });
   }
 
@@ -37,11 +51,14 @@ class _DiaryCreateState extends State<DiaryCreatePage> {
     });
   }
 
+// Diaryを作成する
   Future _submitForm() async {
-    print("hello");
     if (_formKey.currentState!.validate()) {
       // ここでregisterDiary関数を呼び出す
-      await registerDiary(title: title, description: description)
+      await registerDiary(
+              title: title,
+              description: description,
+              dogId: selectedDog?.id ?? "")
           .then((result) {
         // 成功した場合の処理
         print('Diary registered successfully $title $description');
@@ -78,37 +95,43 @@ class _DiaryCreateState extends State<DiaryCreatePage> {
             // タイトルの表示（デバッグ用）
             Text('タイトル: $title'),
             Text('説明書き: $description'),
-            FutureBuilder<List<Dog>>(
-              future: getDogs(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return Text('エラーが発生しました');
-                } else if (snapshot.hasData) {
-                  // dogsデータがList<Map<String, dynamic>>の形式であると仮定
-                  final dogs = snapshot.data!;
-                  return ListView.builder(
-                    shrinkWrap: true, // Column内でListViewを使用する場合に必要
-                    itemCount: dogs.length,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('選択した犬: '),
+                Text(selectedDog?.nickname ?? ""),
+              ],
+            ),
+            dogs == null
+                ? CircularProgressIndicator()
+                :
+                // ローディング完了後、犬のリストを表示
+                ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: dogs!.length,
                     itemBuilder: (context, index) {
-                      // 各犬の情報を表示するウィジェットを返す
-                      final dog = dogs[index];
-                      print('===dgs===');
-                      print(dog.dogOwnerProfileId);
-                      // TODO: デフォルトの写真を用意する
-                      return ListTile(
-                        title: Text(dog.nickname ?? '名前未設定'),
-                        subtitle: Text('出身地: ${dog.birthArea ?? '不明'}'),
+                      final dog = dogs![index];
+                      final dogImage = dog.profileImagePath != null
+                          ? NetworkImage(dog.profileImagePath ?? "")
+                          : AssetImage('assets/icon_waji.jpeg')
+                              as ImageProvider;
+                      return Card(
+                        child: InkWell(
+                          onTap: () {
+                            _handleDogSaved(dog);
+                          },
+                          child: ListTile(
+                            title: Text(dog.nickname),
+                            leading: CircleAvatar(
+                              backgroundImage: dogImage,
+                            ),
+                            // タップ領域を拡張するためにトレーリングに空のWidgetを配置
+                            trailing: Icon(Icons.pets),
+                          ),
+                        ),
                       );
                     },
-                  );
-                } else {
-                  return Text('データが存在しません');
-                }
-              },
-            )
+                  ),
           ],
         ),
       ),

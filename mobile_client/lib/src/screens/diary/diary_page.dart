@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_client/src/api/diary_api.dart';
 import 'package:mobile_client/src/models/diary.dart';
+import 'package:mobile_client/src/screens/diary/create_diary_page.dart';
 import 'dart:convert';
 
 import 'package:mobile_client/src/widgets/image_from_s3.dart';
@@ -40,30 +41,47 @@ class _DiaryPageState extends State<DiaryPage> {
   Widget build(BuildContext context) {
     // diaryを取得する関数を定義
     print(diaries);
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('日記'),
-        ),
-        // ElevatedButton(onPressed: fetchDiaryAndSet, child: Text('取得する')),
-        if (diaries.isEmpty)
-          Text('日記がありません')
-        else
-          ...diaries
-              .expand((diary) => [
-                    Text(diary.description),
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 200,
-                          child: ImageFromS3(imagePath: diary.coverImagePath),
-                        ),
-                      ],
-                    ),
-                  ])
-              .toList(),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('日記'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              // DiaryCreatePageへ遷移
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DiaryCreatePage()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text('日記'),
+          ),
+          // ElevatedButton(onPressed: fetchDiaryAndSet, child: Text('取得する')),
+          if (diaries.isEmpty)
+            Text('日記がありません')
+          else
+            ...diaries
+                .expand((diary) => [
+                      Text(diary.description),
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: 200,
+                            child: ImageFromS3(imagePath: diary.coverImagePath),
+                          ),
+                        ],
+                      ),
+                    ])
+                .toList(),
+        ],
+      ),
     );
   }
 }

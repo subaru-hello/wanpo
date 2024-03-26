@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_client/src/contexts/navigator_contexts.dart';
 import 'package:mobile_client/src/screens/contact.dart';
+import 'package:mobile_client/src/screens/diary/create_diary_page.dart';
 import 'package:mobile_client/src/screens/diary/diary_page.dart';
 import 'package:mobile_client/src/screens/dog_page.dart';
 import 'package:mobile_client/src/screens/privacy_policy.dart';
@@ -39,6 +40,14 @@ class _HomeState extends State<Home> {
         return WalkEntryPage();
       case "diary":
         return DiaryPage();
+      case "createDiary":
+        return DiaryCreatePage(); // Page to create a new diary entry
+      // case "viewDiary":
+      //   return ViewDiaryPage(); // Page to view details of a diary entry
+      // case "editDiary":
+      //   return EditDiaryPage(); // Page to edit an existing diary entry
+      // case "deleteDiary":
+      //   return DeleteDiaryPage(); // Page or dialog to confirm deletion of a diary entry
       case "dog":
         return DogPage();
       case "contact":

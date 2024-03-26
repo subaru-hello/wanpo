@@ -9,6 +9,7 @@ import {
   Res,
   Req,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpRequestDto } from './dto/signup-request.dto';
@@ -18,6 +19,7 @@ import { ForgotPasswordRequestDto } from './dto/forgot-password-request.dto';
 import { ChangePasswordRequestDto } from './dto/change-password-request.dto';
 import { Response } from 'express';
 import { DogOwnerService } from '@Src/dog-owners/dog-owners.service';
+import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -95,6 +97,7 @@ export class AuthController {
   }
 
   @Post('login')
+  // @UseGuards(JwtAuthGuard)
   async login(
     @Req() req: Request,
     @Res() response: Response,
@@ -115,11 +118,12 @@ export class AuthController {
       //   maxAge: 3600000, // 有効期間（例: 1時間）
       // });
       console.log('response', response.req.cookies);
-      return response.status(HttpStatus.OK).json({
-        jwtToken: jwtToken,
-        refreshToken: refreshToken,
-        userSub: userSub,
-      });
+      return response.status(HttpStatus.OK).send();
+      // .json({
+      //   jwtToken: jwtToken,
+      //   refreshToken: refreshToken,
+      //   userSub: userSub,
+      // })
     } catch (e) {
       throw new BadRequestException(e.message);
     }
