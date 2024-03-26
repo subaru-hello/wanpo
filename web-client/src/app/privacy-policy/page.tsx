@@ -178,7 +178,7 @@ export default function Page() {
           <div style={{ marginLeft: "14px" }}>
             <div className="word-wrap mb-2" style={{ whiteSpace: "pre-wrap" }}>
               お客様の情報の開示、情報の訂正、利用停止、削除をご希望の場合は、以下のメールアドレスにご連絡ください。
-              <a href="mailto:octpsubaru@icloud.com">octpsubaru@icloud.com</a>
+              <a href="mailto:withbichon@gmail.com">withbichon@gmail.com</a>
             </div>
           </div>
         </div>
