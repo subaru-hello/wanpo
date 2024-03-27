@@ -1,3 +1,4 @@
+import { Excrement } from '@Prisma/client';
 import { IsNotEmpty } from 'class-validator';
 // date     DateTime
 // stepCount Float?
@@ -11,6 +12,10 @@ export class CreateWalkEntryDto {
 
   duration?: number;
 
+  @IsNotEmpty()
   diaryId: string;
+
   summaryImagePath?: string;
+
+  excraments?: Excrement;
 }

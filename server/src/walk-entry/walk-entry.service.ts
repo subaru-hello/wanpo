@@ -21,7 +21,8 @@ export class WalkEntryService {
   // create
   //   正しいパラメータじゃ無い場合error codeを返す
   async registerWalkEntry(params: CreateWalkEntryDto): Promise<String> {
-    const { stepCount, duration, diaryId, date, summaryImagePath } = params;
+    const { stepCount, duration, diaryId, date, summaryImagePath, excraments } =
+      params;
     const walkEntry = await this.prisma.walkEntry.create({
       data: {
         stepCount: stepCount && Number(stepCount),
@@ -30,6 +31,13 @@ export class WalkEntryService {
         summaryImagePath: summaryImagePath && summaryImagePath,
         diary: diaryId && {
           connect: { id: diaryId },
+        },
+        excraments: excraments && {
+          createMany: {
+            data: {
+              ...excraments,
+            },
+          },
         },
       },
     });

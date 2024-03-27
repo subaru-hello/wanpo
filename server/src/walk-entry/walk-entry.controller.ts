@@ -4,9 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { WalkEntryService } from './walk-entry.service';
@@ -17,6 +15,8 @@ import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
 @Controller('walk-entries')
 export class WalkEntryController {
   constructor(private readonly walkEntryService: WalkEntryService) {}
+
+  // @UseGuards(JwtAuthGuard)
   @Get()
   getWalkEntries(): Promise<WalkEntry[]> {
     return this.walkEntryService.getWalkEntries();
