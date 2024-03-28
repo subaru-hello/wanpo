@@ -5,10 +5,10 @@ import 'package:mobile_client/src/screens/diary/create_diary_page.dart';
 import 'package:mobile_client/src/screens/diary/diary_page.dart';
 import 'package:mobile_client/src/screens/dog_page.dart';
 import 'package:mobile_client/src/screens/privacy_policy.dart';
+import 'package:mobile_client/src/screens/walk-entry/walk_entry.dart';
 import 'package:mobile_client/src/widgets/bottom_navigation_bar.dart';
 import 'package:mobile_client/src/widgets/drawer.dart';
 import 'package:mobile_client/src/screens/word_generator_page.dart';
-import 'package:mobile_client/src/screens/walk_entry.dart';
 import 'package:provider/provider.dart';
 
 import 'favorite_page.dart';
