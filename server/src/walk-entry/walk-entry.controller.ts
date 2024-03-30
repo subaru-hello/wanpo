@@ -17,9 +17,10 @@ export class WalkEntryController {
   constructor(private readonly walkEntryService: WalkEntryService) {}
 
   // @UseGuards(JwtAuthGuard)
-  @Get()
-  getWalkEntries(): Promise<WalkEntry[]> {
-    return this.walkEntryService.getWalkEntries();
+  @Get(':diaryId')
+  getWalkEntries(@Param('diaryId') diaryId: string): Promise<WalkEntry[]> {
+    console.log('=-------', diaryId);
+    return this.walkEntryService.getWalkEntries(diaryId);
   }
   // create
   @UseGuards(JwtAuthGuard)

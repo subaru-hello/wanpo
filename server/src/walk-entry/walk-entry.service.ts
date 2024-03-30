@@ -12,8 +12,12 @@ import { CreateWalkEntryDto, UpdateWalkEntryDto } from './dto';
 @Injectable()
 export class WalkEntryService {
   constructor(private readonly prisma: PrismaService) {}
-  async getWalkEntries(): Promise<WalkEntry[]> {
-    const walkEntries = await this.prisma.walkEntry.findMany();
+  async getWalkEntries(diaryId: string): Promise<WalkEntry[]> {
+    const walkEntries = await this.prisma.walkEntry.findMany({
+      where: {
+        diaryId: diaryId,
+      },
+    });
     console.log('======walkEntrys=====', walkEntries);
     return walkEntries;
   }
@@ -21,10 +25,20 @@ export class WalkEntryService {
   // create
   //   正しいパラメータじゃ無い場合error codeを返す
   async registerWalkEntry(params: CreateWalkEntryDto): Promise<String> {
-    const { stepCount, duration, diaryId, date, summaryImagePath, excraments } =
-      params;
+    const {
+      title,
+      description,
+      stepCount,
+      duration,
+      diaryId,
+      date,
+      summaryImagePath,
+      excraments,
+    } = params;
     const walkEntry = await this.prisma.walkEntry.create({
       data: {
+        title: title && title,
+        description: description && description,
         stepCount: stepCount && Number(stepCount),
         duration: duration && Number(duration),
         date: date && new Date(date),

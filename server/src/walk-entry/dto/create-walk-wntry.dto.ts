@@ -12,6 +12,10 @@ export class CreateWalkEntryDto {
 
   duration?: number;
 
+  description?: string;
+
+  title: string;
+
   @IsNotEmpty()
   diaryId: string;
 

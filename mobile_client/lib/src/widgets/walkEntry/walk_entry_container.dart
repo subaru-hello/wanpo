@@ -29,6 +29,13 @@ class WalkEntryContainer extends StatelessWidget {
           child: Column(
             children: [
               Text(
+                DateFormat('yyyy/MM/dd').format(walkEntry.createdAt),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
                 walkEntry.title,
                 maxLines: 2,
                 // overflow: TextOverflow.ellipsis,
@@ -36,13 +43,6 @@ class WalkEntryContainer extends StatelessWidget {
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
-                ),
-              ),
-              Text(
-                DateFormat('yyyy/MM/dd').format(walkEntry.createdAt),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
                 ),
               ),
               Text('しっしとかっか:'),
