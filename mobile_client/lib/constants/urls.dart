@@ -15,6 +15,12 @@ Uri buildUri(String path) {
       : Uri.https(apiUrl!, adjustedPath);
 }
 
+Uri getWalkEntryUrl(String? diaryId) {
+  return diaryId != null
+      ? buildUri('walk-entries/$diaryId')
+      : buildUri("walk-entries");
+}
+
 // 関数を呼び出して結果を変数に格納
 final Uri walkEntryUrl = buildUri("walk-entries");
 final Uri diaryUrl = buildUri("diaries");
