@@ -22,14 +22,14 @@ class CustomBottomNavigationBar extends StatelessWidget {
           icon: Icon(Icons.home),
           label: 'ホーム',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          label: '好き日誌',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.book_outlined),
-          label: '散歩',
-        ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.favorite),
+        //   label: '好き日誌',
+        // ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.book_outlined),
+        //   label: '散歩',
+        // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.book),
           label: '日記',

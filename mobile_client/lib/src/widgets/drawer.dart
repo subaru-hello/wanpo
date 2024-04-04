@@ -24,26 +24,18 @@ class CustomDrawer extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('ホーム'),
             onTap: () {
-              navigatorNotifierState.setCurrentTabName("wordGenerator");
-              onSelectDrawerItem("wordGenerator");
+              navigatorNotifierState.setCurrentTabName("top");
+              onSelectDrawerItem("top");
             },
           ),
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text('好き日誌'),
-            onTap: () {
-              navigatorNotifierState.setCurrentTabName("favorite");
-              onSelectDrawerItem("favorite");
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.book_outlined),
-            title: Text('わんちゃんの散歩日誌'),
-            onTap: () {
-              navigatorNotifierState.setCurrentTabName("walkEntry");
-              onSelectDrawerItem("walkEntry");
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.favorite),
+          //   title: Text('好き日誌'),
+          //   onTap: () {
+          //     navigatorNotifierState.setCurrentTabName("favorite");
+          //     onSelectDrawerItem("favorite");
+          //   },
+          // ),
           ListTile(
             leading: Icon(Icons.book),
             title: Text('日記一覧'),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class NavigatorNotifierState extends ChangeNotifier {
-  String currentTabName = "wordGenerator";
+  String currentTabName = "top";
   final List<String> tabNames = [
-    'wordGenerator',
-    'favorite',
-    'walkEntry',
+    'top',
+    // 'favorite',
+    // 'walkEntry',
     'diary',
     'dog',
     'privacyPolicy',
@@ -13,7 +13,7 @@ class NavigatorNotifierState extends ChangeNotifier {
   ];
   int getTabIndex(String tabName) {
     // wordGeneratorの場合は0を返す
-    if (tabName == 'wordGenerator') {
+    if (tabName == 'top') {
       return 0;
     }
 

@@ -5,7 +5,8 @@ import 'package:mobile_client/src/screens/diary/create_diary_page.dart';
 import 'package:mobile_client/src/screens/diary/diary_page.dart';
 import 'package:mobile_client/src/screens/dog_page.dart';
 import 'package:mobile_client/src/screens/privacy_policy.dart';
-import 'package:mobile_client/src/screens/walk-entry/walk_entry.dart';
+import 'package:mobile_client/src/screens/top_page.dart';
+import 'package:mobile_client/src/screens/walk-entry/walk_entry_page.dart';
 import 'package:mobile_client/src/widgets/bottom_navigation_bar.dart';
 import 'package:mobile_client/src/widgets/drawer.dart';
 import 'package:mobile_client/src/screens/word_generator_page.dart';
@@ -21,7 +22,7 @@ class Home extends StatefulWidget {
 enum NavigationSource { drawer, bottomNavigation }
 
 class _HomeState extends State<Home> {
-  var selectedTabName = "wordGenerator";
+  var selectedTabName = "top";
   NavigationSource lastNavigationSource = NavigationSource.drawer;
   Widget _getPageWidget() {
     String tabName;
@@ -32,12 +33,14 @@ class _HomeState extends State<Home> {
     }
 
     switch (tabName) {
-      case "wordGenerator":
-        return WordGeneratorPage();
-      case "favorite":
-        return FavoritePage();
-      case "walkEntry":
-        return WalkEntryPage();
+      case "top":
+        return TopPage();
+      // case "favorite":
+      //   return FavoritePage();
+      // case "walkEntry":
+      //   return WalkEntryPage(
+      //     diaryId: "",
+      //   );
       case "diary":
         return DiaryPage();
       case "createDiary":
