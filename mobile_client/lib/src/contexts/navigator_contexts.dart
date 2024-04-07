@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_client/src/route/route.dart';
 
 class NavigatorNotifierState extends ChangeNotifier {
-  String currentTabName = "top";
+  late String currentTabName = routeHome;
   final List<String> tabNames = [
-    'top',
+    routeHome,
     // 'favorite',
     // 'walkEntry',
-    'diary',
-    'dog',
-    'privacyPolicy',
-    'contact'
+    routeDiaries,
+    routeDogs,
+    routePrivacyPolicy,
+    routeContact
   ];
   int getTabIndex(String tabName) {
     // wordGeneratorの場合は0を返す
-    if (tabName == 'top') {
+    if (tabName == routeHome) {
       return 0;
     }
 
