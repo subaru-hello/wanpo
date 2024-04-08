@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import {
   AuthenticationDetails,
+  CognitoRefreshToken,
   CognitoUser,
   CognitoUserAttribute,
   CognitoUserPool,
@@ -14,12 +15,16 @@ import { VeirfyRequestDto } from './dto/verify-request.dto';
 import { ChangePasswordRequestDto } from './dto/change-password-request.dto';
 import { ForgotPasswordRequestDto } from './dto/forgot-password-request.dto';
 import { jwtDecode } from 'jwt-decode';
+import { PrismaService } from '@Src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
   private userPool: CognitoUserPool;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private prisma: PrismaService,
+  ) {
     this.userPool = new CognitoUserPool({
       UserPoolId: this.configService.get<string>('COGNITO_USER_POOL_ID'),
       ClientId: this.configService.get<string>('COGNITO_CLIENT_ID'),
@@ -137,6 +142,44 @@ export class AuthService {
           // newPasswordRequiredに対する処理...
         },
       });
+    });
+  }
+
+  async refreshAccessToken({
+    refreshToken,
+    cognitoSub,
+  }: {
+    refreshToken: string;
+    cognitoSub: string;
+  }) {
+    const dogOwner = await this.prisma.dogOwner.findFirst({
+      select: { email: true },
+      where: {
+        cognitoSub: cognitoSub,
+      },
+    });
+
+    const userData = {
+      Username: dogOwner.email,
+      Pool: this.userPool,
+    };
+
+    const cognitoUser = new CognitoUser(userData);
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.refreshSession(
+        new CognitoRefreshToken({ RefreshToken: refreshToken }),
+        (err, session) => {
+          if (err) {
+            console.error('Refresh token error:', err);
+            reject(err);
+          } else {
+            const newJwtToken = session.getAccessToken().getJwtToken();
+            console.log('Refreshed access token:', newJwtToken);
+            resolve(newJwtToken);
+          }
+        },
+      );
     });
   }
 

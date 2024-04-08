@@ -6,11 +6,12 @@ import { DogModule } from './dog/dog.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { WalkEntryModule } from './walk-entry/walk-entry.module';
 import { AuthModule } from './auth/auth.module';
-import { DogOwnersModule } from './dog-owners/dog-owners.module';
+import { DogOwnersModule } from './dog-owner/dog-owners.module';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { DogProfileImageModule } from './dog/dogProfileImage/dog-profile-image.module';
+import { DogBreedsModule } from './dog-breed/dog-breed.module';
 @Module({
   imports: [
     DiaryModule,
@@ -20,6 +21,7 @@ import { DogProfileImageModule } from './dog/dogProfileImage/dog-profile-image.m
     AuthModule,
     DogOwnersModule,
     DogProfileImageModule,
+    DogBreedsModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

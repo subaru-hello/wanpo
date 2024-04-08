@@ -17,9 +17,10 @@ import { AuthenticateRequestDto } from './dto/authenticate-request.dto';
 import { VeirfyRequestDto } from './dto/verify-request.dto';
 import { ForgotPasswordRequestDto } from './dto/forgot-password-request.dto';
 import { ChangePasswordRequestDto } from './dto/change-password-request.dto';
-import { Response } from 'express';
-import { DogOwnerService } from '@Src/dog-owners/dog-owners.service';
-import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
+import { Response, Request } from 'express';
+import { DogOwnerService } from '@Src/dog-owner/dog-owners.service';
+import { extractValueFromCookie } from './utils/httpUtils';
+import { COGNITO_KEY, REFRESH_TOKEN_KEY } from 'constants/cookies';
 
 @Controller('auth')
 export class AuthController {
@@ -94,6 +95,20 @@ export class AuthController {
       console.log('cognito user deletion failed', error);
       throw new Error(error);
     }
+  }
+
+  @Post('refresh-access-token')
+  async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
+    console.log(req.headers.cookie);
+    const cookie = req.headers.cookie;
+    const cognitoSub = extractValueFromCookie(cookie, COGNITO_KEY);
+    const refreshToken = extractValueFromCookie(cookie, REFRESH_TOKEN_KEY);
+    const accessToken = await this.authService.refreshAccessToken({
+      refreshToken,
+      cognitoSub,
+    });
+    res.cookie('jwtToken', accessToken);
+    return res.status(HttpStatus.OK).send();
   }
 
   @Post('login')
