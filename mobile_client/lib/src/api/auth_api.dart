@@ -33,8 +33,6 @@ Future<Map<String, String>> parseCookies(String cookieString) async {
           key == 'refreshToken') {
         cookies[key] = value;
         await SecureTokenStorage.saveToken(key, value);
-        // printAnything(key);
-        // printAnything(cookies[key], cookies[key]);
       }
     } else if (keyValue.length > 2) {
       var key = keyValue[keyValue.length - 2]; // 後ろから2番目の要素
@@ -51,8 +49,6 @@ Future<Map<String, String>> parseCookies(String cookieString) async {
           key == 'userSub' ||
           key == 'refreshToken') {
         await SecureTokenStorage.saveToken(key, value);
-        // printAnything(key);
-        // cookies[key] = value;
       }
     }
   }
@@ -68,6 +64,7 @@ Future login({required String email, required String password}) async {
     loginUrl,
     headers: <String, String>{
       'Content-Type': 'application/json',
+      'Cookie': 'test=test;'
     },
     body: json.encode({
       'email': email,
@@ -92,6 +89,46 @@ Future login({required String email, required String password}) async {
     }
   } else {
     print('Failed to login');
+    return false;
+  }
+}
+
+Future refreshAccessToken(
+    {required String email, required String password}) async {
+  const userSubKey = 'userSub';
+
+  const jwtTokenKey = 'jwtToken';
+  const refreshTokenKey = 'refreshToken';
+  final sub = await SecureTokenStorage.getStorageValue(userSubKey);
+  final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
+  final response = await http.post(
+    refreshAccessTokenUrl,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Cookie': '$refreshTokenKey=$refresh;$userSubKey=$sub;'
+    },
+    body: json.encode({
+      'email': email,
+      'password': password,
+    }),
+  );
+  if (response.statusCode == HttpStatus.ok) {
+    // "Set-Cookie"ヘッダーからCookieを取得
+    String? cookie = response.headers['set-cookie'];
+    if (cookie != null) {
+      await parseCookies(cookie);
+      final token = await SecureTokenStorage.getStorageValue(jwtTokenKey);
+      final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
+      final cookieHeader =
+          'jwtToken=$token; refreshToken=$refresh; userSub=$sub';
+      await SecureTokenStorage.saveToken('cookie', cookieHeader);
+      print('response cookie');
+      print('token $token');
+      print('sub $sub');
+      print('refresh $refresh');
+    }
+  } else {
+    print('Failed to refresh access token');
     return false;
   }
 }
