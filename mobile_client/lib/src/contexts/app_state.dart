@@ -5,9 +5,12 @@ import 'package:mobile_client/src/screens/auth/login.dart';
 import 'package:mobile_client/src/screens/contact.dart';
 import 'package:mobile_client/src/screens/diary/create_diary_page.dart';
 import 'package:mobile_client/src/screens/diary/diary_page.dart';
-import 'package:mobile_client/src/screens/dog_page.dart';
+import 'package:mobile_client/src/screens/diary/show_diary_page.dart';
+import 'package:mobile_client/src/screens/dog/create_dog.dart';
+import 'package:mobile_client/src/screens/dog/dog_page.dart';
 import 'package:mobile_client/src/screens/privacy_policy.dart';
 import 'package:mobile_client/src/screens/top_page.dart';
+import 'package:mobile_client/src/screens/walk-entry/create_walk_entry_page.dart';
 
 class AppState extends ChangeNotifier {
   // 変数を定義
@@ -34,12 +37,16 @@ class AppState extends ChangeNotifier {
   }
 
 // navigator
-  void navigateTo(String routeName) {
+  void navigateTo(String routeName, {dynamic oneRecord}) {
+    print("===routeNavigate===");
+    print(routeName);
     switch (routeName) {
       case routeHome:
         currentPage = TopPage();
       case routeDogs:
         currentPage = DogPage();
+      case routeDogsCreate:
+        currentPage = DogCreatePage();
       case routeDiaries:
         currentPage = DiaryPage();
       case routeLogin:
@@ -50,9 +57,18 @@ class AppState extends ChangeNotifier {
         currentPage = ContactPage();
       case routePrivacyPolicy:
         currentPage = PrivacyPolicyPage();
+      case routeWalkEntryCreate:
+        currentPage = WalkEntryCreatePage(
+          selectedDiary: oneRecord,
+        );
+      case routeDiaryDetail:
+        currentPage = DiaryShowPage(
+          diary: oneRecord,
+        );
       default:
         currentPage = TopPage();
     }
+    print(currentPage);
     notifyListeners();
   }
 }
