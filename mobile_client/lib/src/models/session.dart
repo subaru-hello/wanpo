@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:mobile_client/src/utils/localstorageUtils.dart';
+import 'package:mobile_client/src/utils/local_storage_utils.dart';
 
 class Session {
   Map<String, String> headers = {'Content-Type': 'application/json'};
@@ -35,8 +34,6 @@ class Session {
       http.Response response =
           await http.post(url, body: body, headers: headers);
       print('login info $response');
-      // updateCookie(response);
-      // return response;
       print('Response body: ${response.body}');
       return response;
     } catch (e) {

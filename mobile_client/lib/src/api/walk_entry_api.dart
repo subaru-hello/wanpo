@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:mobile_client/src/models/session.dart';
-import 'package:mobile_client/src/models/walk_entry.dart';
-import 'package:mobile_client/src/utils/localstorageUtils.dart';
+import 'package:mobile_client/src/utils/encode.dart';
+import 'package:mobile_client/src/utils/local_storage_utils.dart';
 
 import '../../constants/urls.dart';
 
@@ -34,20 +34,25 @@ Future registerWalkEntry({
     HttpHeaders.authorizationHeader: 'Basic $token',
     'Cookie': cookie
   };
-  // フロントで、初期ロード時にuserSubに紐づく犬の情報を取得しておく
+
   final body = json.encode({
     'title': title,
     'description': description,
     'diaryId': diaryId,
     'stepCount': stepCount,
-    'date': date,
+    'date': encodeDateTimeToString(date),
     'duration': duration,
-    'summaryImagePath': summaryImagePath
+    'summaryImagePath': summaryImagePath ?? ""
   });
+  print("======");
+  print(body);
+  print(walkEntryUrl);
+  print("======");
 
   final response = await session.post(walkEntryUrl, body);
 
   if (!response) {
+    print(response);
     print('Failed to post the walkEntry!');
     return;
   }
