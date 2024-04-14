@@ -42,7 +42,7 @@ class WalkEntry {
       duration: json['duration'] ?? 0,
       title: json['title'] ?? '',
       summaryImagePath: json['summaryImagePath'],
-      excrements: (json['excrements'] as List<dynamic>?)
+      excrements: (json['excrements'])
               ?.map((e) => Excrement.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
