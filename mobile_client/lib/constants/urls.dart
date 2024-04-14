@@ -26,6 +26,7 @@ final Uri walkEntryUrl = buildUri("walk-entries");
 final Uri diaryUrl = buildUri("diaries");
 final Uri loginUrl = buildUri("auth/login");
 final Uri refreshAccessTokenUrl = buildUri("auth/refresh-access-token");
+final Uri checkLoggedInUrl = buildUri("auth/is-logged-in");
 final Uri dogUrl = buildUri("dogs");
 final Uri dogBreedUrl = buildUri("dog-breeds");
 final Uri ownedDogUrl = buildUri("dogs/owned-dogs");

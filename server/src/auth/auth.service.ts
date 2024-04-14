@@ -167,6 +167,7 @@ export class AuthService {
         cognitoSub: cognitoSub,
       },
     });
+    console.log('dogOwner', dogOwner);
     const userData = {
       Username: dogOwner.email,
       Pool: this.userPool,
@@ -264,26 +265,38 @@ export class AuthService {
 
   //今セッションを持っているユーザーがログイン中か
   loggedIn() {
-    var cognitoUser = this.userPool.getCurrentUser();
-    if (cognitoUser) {
-      cognitoUser.getSession(function (err, session) {
-        if (err) {
-          console.log('required to login');
-          return false;
-        }
-        cognitoUser.getUserAttributes(function (err, attributes) {
+    return new Promise((resolve, reject) => {
+      const cognitoUser = this.userPool.getCurrentUser();
+      console.log('Current user:', cognitoUser);
+
+      if (!cognitoUser) {
+        console.log('No user logged in.');
+        resolve(false); // No user is logged in
+      } else {
+        cognitoUser.getSession((err, session) => {
           if (err) {
-            console.log('failed to fetch user attributes');
-            return false;
+            console.log('Failed to get session, login required:', err);
+            resolve(false);
           } else {
-            console.log('attribute', attributes);
+            console.log('Session valid:', session.isValid());
+            // Check if session is valid
+            if (session.isValid()) {
+              cognitoUser.getUserAttributes((err, attributes) => {
+                if (err) {
+                  console.log('Failed to fetch user attributes:', err);
+                  reject(err); // Error fetching user attributes
+                } else {
+                  console.log('User attributes:', attributes);
+                  resolve(true); // Session is valid and user attributes fetched
+                }
+              });
+            } else {
+              resolve(false); // Session is not valid
+            }
           }
         });
-      });
-      return true;
-    } else {
-      return false;
-    }
+      }
+    });
   }
 
   async deleteCognitoUser({ email }: { email: string }) {

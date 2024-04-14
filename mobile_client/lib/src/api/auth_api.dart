@@ -2,15 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:mobile_client/src/utils/localstorageUtils.dart';
+import 'package:mobile_client/src/utils/local_storage_utils.dart';
 
 import '../../constants/urls.dart';
-
-dynamic printAnything(dynamic printTarget, key) {
-  print("====$key=====");
-  print(printTarget);
-  print("====$key=====");
-}
 
 Future<Map<String, String>> parseCookies(String cookieString) async {
   Map<String, String> cookies = {};
@@ -18,7 +12,6 @@ Future<Map<String, String>> parseCookies(String cookieString) async {
 
   for (var part in cookieParts) {
     final keyValue = part.split('=');
-    printAnything(keyValue, "keyValue");
     if (keyValue.length == 2) {
       var key = keyValue.first;
       var value = keyValue.last;
@@ -29,7 +22,7 @@ Future<Map<String, String>> parseCookies(String cookieString) async {
       if (key == 'Path' ||
           key == 'Expires' ||
           key == 'jwtToken' ||
-          key == 'userSub' ||
+          key == 'cognitoSub' ||
           key == 'refreshToken') {
         cookies[key] = value;
         await SecureTokenStorage.saveToken(key, value);
@@ -46,7 +39,7 @@ Future<Map<String, String>> parseCookies(String cookieString) async {
       if (key == 'Path' ||
           key == 'Expires' ||
           key == 'jwtToken' ||
-          key == 'userSub' ||
+          key == 'cognitoSub' ||
           key == 'refreshToken') {
         await SecureTokenStorage.saveToken(key, value);
       }
@@ -58,7 +51,7 @@ Future<Map<String, String>> parseCookies(String cookieString) async {
 
 Future login({required String email, required String password}) async {
   const jwtTokenKey = 'jwtToken';
-  const userSubKey = 'userSub';
+  const cognitoSubKey = 'cognitoSub';
   const refreshTokenKey = 'refreshToken';
   final response = await http.post(
     loginUrl,
@@ -77,10 +70,10 @@ Future login({required String email, required String password}) async {
     if (cookie != null) {
       await parseCookies(cookie);
       final token = await SecureTokenStorage.getStorageValue(jwtTokenKey);
-      final sub = await SecureTokenStorage.getStorageValue(userSubKey);
+      final sub = await SecureTokenStorage.getStorageValue(cognitoSubKey);
       final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
       final cookieHeader =
-          'jwtToken=$token; refreshToken=$refresh; userSub=$sub';
+          'jwtToken=$token; refreshToken=$refresh; cognitoSub=$sub';
       await SecureTokenStorage.saveToken('cookie', cookieHeader);
       print('response cookie');
       print('token $token');
@@ -93,25 +86,33 @@ Future login({required String email, required String password}) async {
   }
 }
 
-Future refreshAccessToken(
-    {required String email, required String password}) async {
-  const userSubKey = 'userSub';
+Future isLoggedIn() async {
+  // refreshTokenでアクセスをリフレッシュする
+  final hasSucceededRefreshing = await refreshAccessToken();
+  final hasCurrentLoggedIn = await checkCurrentLogin();
+  if (!hasSucceededRefreshing || !hasCurrentLoggedIn) {
+    print("LOGIN_REQUIRED");
+    return false;
+  }
 
-  const jwtTokenKey = 'jwtToken';
-  const refreshTokenKey = 'refreshToken';
-  final sub = await SecureTokenStorage.getStorageValue(userSubKey);
+  return true;
+}
+
+const cognitoSubKey = 'cognitoSub';
+
+const jwtTokenKey = 'jwtToken';
+const refreshTokenKey = 'refreshToken';
+Future refreshAccessToken() async {
+  final sub = await SecureTokenStorage.getStorageValue(cognitoSubKey);
   final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
-  final response = await http.post(
+  final response = await http.get(
     refreshAccessTokenUrl,
     headers: <String, String>{
       'Content-Type': 'application/json',
-      'Cookie': '$refreshTokenKey=$refresh;$userSubKey=$sub;'
+      'Cookie': '$refreshTokenKey=$refresh;$cognitoSubKey=$sub;'
     },
-    body: json.encode({
-      'email': email,
-      'password': password,
-    }),
   );
+  print(response.statusCode);
   if (response.statusCode == HttpStatus.ok) {
     // "Set-Cookie"ヘッダーからCookieを取得
     String? cookie = response.headers['set-cookie'];
@@ -120,15 +121,37 @@ Future refreshAccessToken(
       final token = await SecureTokenStorage.getStorageValue(jwtTokenKey);
       final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
       final cookieHeader =
-          'jwtToken=$token; refreshToken=$refresh; userSub=$sub';
+          'jwtToken=$token; refreshToken=$refresh; cognitoSub=$sub';
       await SecureTokenStorage.saveToken('cookie', cookieHeader);
       print('response cookie');
       print('token $token');
       print('sub $sub');
       print('refresh $refresh');
     }
+    return true;
   } else {
     print('Failed to refresh access token');
     return false;
+  }
+}
+
+Future checkCurrentLogin() async {
+  final sub = await SecureTokenStorage.getStorageValue(cognitoSubKey);
+  final token = await SecureTokenStorage.getStorageValue(jwtTokenKey);
+  final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
+  final cookieHeader =
+      'jwtToken=$token; refreshToken=$refresh; cognitoSub=$sub';
+  await SecureTokenStorage.saveToken('cookie', cookieHeader);
+  final response = await http.get(
+    checkLoggedInUrl,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Cookie': cookieHeader
+    },
+  );
+  if (response.statusCode != HttpStatus.ok) {
+    return false;
+  } else {
+    return true;
   }
 }

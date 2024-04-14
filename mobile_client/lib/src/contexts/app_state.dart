@@ -11,6 +11,7 @@ import 'package:mobile_client/src/screens/dog/dog_page.dart';
 import 'package:mobile_client/src/screens/privacy_policy.dart';
 import 'package:mobile_client/src/screens/top_page.dart';
 import 'package:mobile_client/src/screens/walk-entry/create_walk_entry_page.dart';
+import 'package:mobile_client/src/widgets/providers/require_login_provider.dart';
 
 class AppState extends ChangeNotifier {
   // 変数を定義
@@ -46,21 +47,20 @@ class AppState extends ChangeNotifier {
       case routeDogs:
         currentPage = DogPage();
       case routeDogsCreate:
-        currentPage = DogCreatePage();
+        currentPage = RequireLoginProvider(child: DogCreatePage());
       case routeDiaries:
         currentPage = DiaryPage();
       case routeLogin:
         currentPage = LoginPage();
       case routeCreateDiaries:
-        currentPage = DiaryCreatePage();
+        currentPage = RequireLoginProvider(child: DiaryCreatePage());
       case routeContact:
         currentPage = ContactPage();
       case routePrivacyPolicy:
         currentPage = PrivacyPolicyPage();
       case routeWalkEntryCreate:
-        currentPage = WalkEntryCreatePage(
-          selectedDiary: oneRecord,
-        );
+        currentPage = RequireLoginProvider(
+            child: WalkEntryCreatePage(selectedDiary: oneRecord));
       case routeDiaryDetail:
         currentPage = DiaryShowPage(
           diary: oneRecord,

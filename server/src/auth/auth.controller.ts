@@ -88,8 +88,9 @@ export class AuthController {
   }
 
   @Get('is-logged-in')
-  isLoggedIn() {
-    return this.authService.loggedIn();
+  async isLoggedIn(@Res() res: Response) {
+    const isLoggedIn = await this.authService.loggedIn();
+    return res.status(HttpStatus.OK).send(isLoggedIn);
   }
 
   @Post('change-password')
@@ -118,12 +119,19 @@ export class AuthController {
     }
   }
 
-  @Post('refresh-access-token')
+  @Get('refresh-access-token')
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
     console.log(req.headers.cookie);
     const cookie = req.headers.cookie;
     const cognitoSub = extractValueFromCookie(cookie, COGNITO_KEY);
     const refreshToken = extractValueFromCookie(cookie, REFRESH_TOKEN_KEY);
+    if (!cognitoSub || !refreshToken) {
+      return res
+        .status(HttpStatus.UNAUTHORIZED)
+        .send(ERROR_CODES.LOGIN_REQUIRED);
+    }
+    console.log('cognitoSub', cognitoSub);
+    console.log('refreshToken', refreshToken);
     const accessToken = await this.authService.refreshAccessToken({
       refreshToken,
       cognitoSub,

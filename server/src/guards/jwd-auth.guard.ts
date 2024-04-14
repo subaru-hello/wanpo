@@ -13,7 +13,7 @@ export class JwtAuthGuard implements CanActivate {
   // JWTとリクエストCookieに含まれるjwtTokenが一致していないとエンドポイントを叩けない
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    console.log('====request===', request);
+    console.log('====request===', request.cookies);
     const jwtToken = request.cookies?.jwtToken;
     console.log('Authorization:', request.headers.authorization);
     console.log('JwtToken:', request.cookies?.jwtToken);

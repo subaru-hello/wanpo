@@ -18,6 +18,10 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => AppState(),
       child: MaterialApp(
+        // routes: {
+        //   // '/': (context) => Home(),
+        //   '/dogs': (context) => DogPage(),
+        // },
         debugShowCheckedModeBanner: false,
         title: 'Namer App',
         theme: ThemeData(
