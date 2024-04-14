@@ -16,6 +16,11 @@ import { ChangePasswordRequestDto } from './dto/change-password-request.dto';
 import { ForgotPasswordRequestDto } from './dto/forgot-password-request.dto';
 import { jwtDecode } from 'jwt-decode';
 import { PrismaService } from '@Src/prisma/prisma.service';
+import { DogOwnerService } from '@Src/dog-owner/dog-owners.service';
+import {
+  AdminDeleteUserCommand,
+  CognitoIdentityProvider,
+} from '@aws-sdk/client-cognito-identity-provider';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +29,7 @@ export class AuthService {
   constructor(
     private configService: ConfigService,
     private prisma: PrismaService,
+    private dogOwnerService: DogOwnerService,
   ) {
     this.userPool = new CognitoUserPool({
       UserPoolId: this.configService.get<string>('COGNITO_USER_POOL_ID'),
@@ -71,12 +77,15 @@ export class AuthService {
       Pool: this.userPool,
     };
     const cognitoUser = new CognitoUser(userData);
+
     return new Promise((resolve, reject) => {
       return cognitoUser.confirmRegistration(
         token.toString(),
         true,
-        function (error, result) {
+        async function (error, result) {
           if (error) reject(error);
+          // 既存のユーザーのcognitosubを更新する
+          console.log('======', result);
           resolve(result);
         },
       );
@@ -105,13 +114,13 @@ export class AuthService {
         const jwtToken = result.getAccessToken().getJwtToken();
         const refreshToken = result.getRefreshToken().getToken();
         const decodedJwtToken = jwtDecode(jwtToken); // Ensure jwtDecode is defined or imported
-        const userSub = decodedJwtToken.sub;
+        const cognitoSub = decodedJwtToken.sub;
 
         console.log('end');
         return {
           jwtToken,
           refreshToken: refreshToken,
-          userSub,
+          cognitoSub,
         };
         // 以降の処理...
       } catch (err) {
@@ -158,7 +167,6 @@ export class AuthService {
         cognitoSub: cognitoSub,
       },
     });
-
     const userData = {
       Username: dogOwner.email,
       Pool: this.userPool,
@@ -253,6 +261,7 @@ export class AuthService {
       });
     });
   }
+
   //今セッションを持っているユーザーがログイン中か
   loggedIn() {
     var cognitoUser = this.userPool.getCurrentUser();
@@ -279,19 +288,24 @@ export class AuthService {
 
   async deleteCognitoUser({ email }: { email: string }) {
     // cognitoUserPoolからユーザーを削除
-    const userData = {
+    const adminDeleteUserCommandInput = {
+      UserPoolId: this.userPool.getUserPoolId(),
       Username: email,
-      Pool: this.userPool,
     };
-    const cognitoUser = new CognitoUser(userData);
-    cognitoUser.deleteUser(function (err, attributes) {
-      if (err) {
-        console.log('deletion failed ', err);
-        return false;
-      } else {
-        console.log('delete succeeded', attributes);
-        return true;
-      }
-    });
+    const client = new CognitoIdentityProvider({ region: 'ap-northeast-1' });
+    try {
+      const adminDeleteUserCommandResults = await client.send(
+        new AdminDeleteUserCommand(adminDeleteUserCommandInput),
+      );
+      console.log(
+        'adminDeleteUserCommandResults',
+        adminDeleteUserCommandResults,
+      );
+      console.log('User deleted successfully');
+      return true;
+    } catch (err) {
+      console.error('Deletion failed:', err);
+      throw err;
+    }
   }
 }

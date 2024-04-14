@@ -12,7 +12,7 @@ export function extractValueFromCookie(
   );
 
   if (!valueOfCookie) return null;
-
+  console.log('^^^^^', valueOfCookie);
   return getValueFromCookie(valueOfCookie);
 }
 

@@ -47,14 +47,18 @@ export class DogOwnerService {
   }): Promise<DogOwner | undefined> {
     const timeNow = new Date();
     // 10分前の日時をミリ秒で計算
+    // 日本時間に換算する
     const tenMinutesAgo = new Date(timeNow.getTime() - 10 * 60000);
+    console.log(new Date(tenMinutesAgo.getUTCDate()));
+    console.log(tenMinutesAgo);
 
-    return this.prisma.dogOwner.findFirst({
+    return await this.prisma.dogOwner.findFirst({
       where: {
-        ...params,
+        id: params.id,
         createdAt: {
-          lt: tenMinutesAgo,
+          lt: new Date(tenMinutesAgo.getUTCDate()),
         },
+        unregisterdAt: null,
       },
     });
   }
@@ -65,7 +69,7 @@ export class DogOwnerService {
     cognitoSub?: string;
   }): Promise<DogOwner | undefined> {
     return this.prisma.dogOwner.findFirst({
-      where: { ...params },
+      where: { email: params.email, unregisterdAt: null },
     });
   }
 
@@ -75,6 +79,7 @@ export class DogOwnerService {
     const targetDogOwner = await this.prisma.dogOwner.findFirst({
       where: {
         email,
+        unregisterdAt: null,
         // プロフィールは、サインアップ後初めての画面で作成必須にしておく。
       },
     });

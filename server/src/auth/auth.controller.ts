@@ -21,6 +21,9 @@ import { Response, Request } from 'express';
 import { DogOwnerService } from '@Src/dog-owner/dog-owners.service';
 import { extractValueFromCookie } from './utils/httpUtils';
 import { COGNITO_KEY, REFRESH_TOKEN_KEY } from 'constants/cookies';
+import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
+import { fetchUsersFromCognitoPool } from './utils/cognito';
+import { ERROR_CODES } from 'constants/errorCodes';
 
 @Controller('auth')
 export class AuthController {
@@ -38,7 +41,7 @@ export class AuthController {
 
       await this.dogOwnerService.registerOwner({ email: params.email });
     } catch (error) {
-      console.log('signUpError');
+      console.log(ERROR_CODES.SIGN_UP_ERROR);
       throw new Error(error);
     }
     // 「認証コードを送りましたので、メールをご確認ください」を送る
@@ -50,20 +53,38 @@ export class AuthController {
     // dogOwnerからemailが一致かつcreated_atが現在時刻より10分以前のユーザーをfindOneする
     // 10分経って未認証のdogOwnerは削除する
     const targetOwner = await this.dogOwnerService.findOne(params);
-
+    if (!targetOwner) {
+      console.log(ERROR_CODES.USER_NOT_FOUND_ERROR);
+      return ERROR_CODES.USER_NOT_FOUND_ERROR;
+    }
     const isExpiredOwner = await this.dogOwnerService.findUnVerifiedOwner({
       id: targetOwner.id,
     });
-    // 見つかった場合、該当dogOwnerのuserSubでuserPoolを検索し、削除する
+
+    // 見つかった場合、該当dogOwnerのcognitoSubでuserPoolを検索し、削除する
     if (isExpiredOwner) {
+      console.log('isEx', isExpiredOwner);
       await this.deleteCognitoUser(params);
       await this.dogOwnerService.unRegisterOwner(params);
-      return 'EXPIRED_USER_ERROR';
+      return ERROR_CODES.EXPIRED_USER_ERROR;
     }
+    console.log(targetOwner);
+    const isVerifySucceeded = await this.authService.verifyCode(params);
+    console.log('isVeryfySucceeded', isVerifySucceeded);
     // dogOwnerテーブルからも削除する(unregisteredAtを現在時刻にする)
     // 認証期限が過ぎています。さいど作成しなおしてくださいという旨のメールを返す
     // 見つからなかった場合、this.authService.verifyCode(params)を返す
-    return this.authService.verifyCode(params);
+    if (isVerifySucceeded === 'SUCCESS') {
+      const user = await fetchUsersFromCognitoPool(params.email);
+      const cognitoSub = user[0]['Username'];
+      console.log(cognitoSub);
+      await this.dogOwnerService.updateOwnerInfo({
+        email: params.email,
+        cognitoSub: cognitoSub,
+      });
+      return true;
+    }
+    return false;
   }
 
   @Get('is-logged-in')
@@ -119,14 +140,16 @@ export class AuthController {
     @Body() authenticateRequest: AuthenticateRequestDto,
   ) {
     console.log('–––––', req.headers);
+    console.log('–––––', authenticateRequest);
+    console.log('–––––', req.headers.cookie);
     try {
-      const { jwtToken, refreshToken, userSub } =
+      const { jwtToken, refreshToken, cognitoSub } =
         await this.authService.authenticate(authenticateRequest);
       response.cookie('jwtToken', jwtToken);
-      response.cookie('userSub', userSub);
+      response.cookie('cognitoSub', cognitoSub);
       response.cookie('refreshToken', refreshToken);
       // 他の情報をCookieにセットする場合
-      // response.cookie('userSub', userSub, {
+      // response.cookie('cognitoSub', cognitoSub, {
       //   httpOnly: true,
       //   secure: true, // 本番環境でHTTPSを使用している場合
       //   path: '/',
@@ -137,7 +160,7 @@ export class AuthController {
       // .json({
       //   jwtToken: jwtToken,
       //   refreshToken: refreshToken,
-      //   userSub: userSub,
+      //   cognitoSub: cognitoSub,
       // })
     } catch (e) {
       throw new BadRequestException(e.message);
