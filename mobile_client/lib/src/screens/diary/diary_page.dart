@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_client/src/api/diary_api.dart';
+import 'package:mobile_client/src/contexts/app_state.dart';
 import 'package:mobile_client/src/models/diary.dart';
+import 'package:mobile_client/src/route/route.dart';
 import 'package:mobile_client/src/screens/diary/create_diary_page.dart';
 import 'dart:convert';
 
 import 'package:mobile_client/src/widgets/image_from_s3.dart';
+import 'package:provider/provider.dart';
 
 // 外部から呼び出されるページクラス
 class DiaryPage extends StatefulWidget {
@@ -33,13 +36,14 @@ class _DiaryPageState extends State<DiaryPage> {
       }
     } catch (e) {
       print(e);
-      print("error=======");
     }
   }
 
   // widgetをbuildする
+  @override
   Widget build(BuildContext context) {
     // diaryを取得する関数を定義
+    var appState = context.watch<AppState>();
     print(diaries);
     return Scaffold(
       appBar: AppBar(
@@ -68,18 +72,29 @@ class _DiaryPageState extends State<DiaryPage> {
             Text('日記がありません')
           else
             ...diaries
-                .expand((diary) => [
-                      Text(diary.description),
-                      Column(
+                .map((diary) => GestureDetector(
+                      onTap: () {
+                        appState.navigateTo(routeDiaryDetail, oneRecord: diary);
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => DiaryShowPage(diary: diary),
+                        //   ),
+                        // );
+                      },
+                      child: Column(
                         children: [
+                          Text(diary.description),
                           SizedBox(
                             height: 200,
-                            child: ImageFromS3(imagePath: diary.coverImagePath),
+                            child: ImageFromS3(
+                                imagePath: diary.coverImagePath ??
+                                    "default-dog-img.png"),
                           ),
                         ],
                       ),
-                    ])
-                .toList(),
+                    ))
+                .toList()
         ],
       ),
     );

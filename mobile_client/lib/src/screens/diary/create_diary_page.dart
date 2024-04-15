@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile_client/src/api/diary_api.dart';
 import 'package:mobile_client/src/api/dog_api.dart';
 import 'package:mobile_client/src/models/dog.dart';
-import 'package:mobile_client/src/utils/localstorageUtils.dart';
+import 'package:mobile_client/src/utils/local_storage_utils.dart';
 import 'package:mobile_client/src/widgets/diary/form.dart';
 
 class DiaryCreatePage extends StatefulWidget {
@@ -17,7 +17,7 @@ class _DiaryCreateState extends State<DiaryCreatePage> {
   Dog? selectedDog;
   List<Dog>? dogs;
   final storage = FlutterSecureStorage();
-  late Future<String> userSub;
+  late Future<String> cognitoSub;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -70,8 +70,8 @@ class _DiaryCreateState extends State<DiaryCreatePage> {
   }
 
   Future<List<Dog>> getDogs() async {
-    final userSub = await SecureTokenStorage.getStorageValue("userSub");
-    final responseDogs = await fetchOwnedDogs(userSub); // これはAPI呼び出しの仮の関数
+    final cognitoSub = await SecureTokenStorage.getStorageValue("cognitoSub");
+    final responseDogs = await fetchOwnedDogs(cognitoSub); // これはAPI呼び出しの仮の関数
     List<Dog> dogs = (responseDogs['dogs'] as List)
         .map((dogJson) => Dog.fromJson(dogJson))
         .toList();

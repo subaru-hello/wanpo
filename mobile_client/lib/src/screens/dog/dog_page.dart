@@ -21,7 +21,6 @@ class _DogPageState extends State<DogPage> {
   @override
   void initState() {
     super.initState();
-    // isLoggedIn();
     fetchDogAndSet();
   }
 
