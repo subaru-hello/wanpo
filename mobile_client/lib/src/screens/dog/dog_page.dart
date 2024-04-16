@@ -69,14 +69,24 @@ class _DogPageState extends State<DogPage> {
           else
             ...dogs
                 .expand((dog) => [
-                      Text(dog.nickname),
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 200,
-                            child: ImageFromS3(imagePath: dog.profileImagePath),
-                          ),
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          appState.navigateTo(routeDogsDetail, oneRecord: dog);
+                        },
+                        child: Column(
+                          children: [
+                            Text(dog.nickname),
+                            Column(
+                              children: [
+                                SizedBox(
+                                  height: 200,
+                                  child: ImageFromS3(
+                                      imagePath: dog.profileImagePath),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ])
                 .toList(),
