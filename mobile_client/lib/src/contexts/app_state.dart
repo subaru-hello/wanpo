@@ -8,6 +8,7 @@ import 'package:mobile_client/src/screens/diary/diary_page.dart';
 import 'package:mobile_client/src/screens/diary/show_diary_page.dart';
 import 'package:mobile_client/src/screens/dog/create_dog.dart';
 import 'package:mobile_client/src/screens/dog/dog_page.dart';
+import 'package:mobile_client/src/screens/dog/show_dog.dart';
 import 'package:mobile_client/src/screens/privacy_policy.dart';
 import 'package:mobile_client/src/screens/top_page.dart';
 import 'package:mobile_client/src/screens/walk-entry/create_walk_entry_page.dart';
@@ -48,6 +49,8 @@ class AppState extends ChangeNotifier {
         currentPage = DogPage();
       case routeDogsCreate:
         currentPage = RequireLoginProvider(child: DogCreatePage());
+      case routeDogsDetail:
+        currentPage = DogShowPage(dog: oneRecord);
       case routeDiaries:
         currentPage = DiaryPage();
       case routeLogin:
