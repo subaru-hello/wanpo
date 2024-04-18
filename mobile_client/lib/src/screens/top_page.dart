@@ -16,16 +16,16 @@ class _TopPageState extends State<TopPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-            icon: Icon(Icons.login),
-            onPressed: () {
-              appState.navigateTo(routeLogin);
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => LoginPage()),
-              // );
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.login),
+          //   onPressed: () {
+          //     appState.navigateTo(routeLogin);
+          //     // Navigator.push(
+          //     //   context,
+          //     //   MaterialPageRoute(builder: (context) => LoginPage()),
+          //     // );
+          //   },
+          // ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Text(
@@ -41,7 +41,7 @@ class _TopPageState extends State<TopPage> {
                 appState.navigateTo(routeDogs);
               },
               icon: Icon(Icons.pets),
-              label: Text("他のビションを見る"))
+              label: Text("ビションを見にいく"))
         ],
       ),
     );
