@@ -19,6 +19,7 @@ import { PrismaService } from '@Src/prisma/prisma.service';
 import { DogOwnerService } from '@Src/dog-owner/dog-owners.service';
 import {
   AdminDeleteUserCommand,
+  AdminUpdateUserAttributesCommand,
   CognitoIdentityProvider,
 } from '@aws-sdk/client-cognito-identity-provider';
 
@@ -306,10 +307,9 @@ export class AuthService {
       Username: email,
     };
     const client = new CognitoIdentityProvider({ region: 'ap-northeast-1' });
+    const command = new AdminDeleteUserCommand(adminDeleteUserCommandInput);
     try {
-      const adminDeleteUserCommandResults = await client.send(
-        new AdminDeleteUserCommand(adminDeleteUserCommandInput),
-      );
+      const adminDeleteUserCommandResults = await client.send(command);
       console.log(
         'adminDeleteUserCommandResults',
         adminDeleteUserCommandResults,
@@ -320,5 +320,29 @@ export class AuthService {
       console.error('Deletion failed:', err);
       throw err;
     }
+  }
+
+  // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/AdminUpdateUserAttributesCommand/
+  async changeCognitoEmail({ newEmail }: { newEmail: string }) {
+    // cognitoUserPoolからユーザーを削除
+    const input = {
+      UserPoolId: this.userPool.getUserPoolId(),
+      Username: 'username',
+      UserAttributes: [
+        {
+          Name: 'email',
+          Value: newEmail,
+        },
+        {
+          Name: 'email_verified',
+          Value: 'false',
+        },
+      ],
+    };
+
+    const client = new CognitoIdentityProvider({ region: 'ap-northeast-1' });
+    const command = new AdminUpdateUserAttributesCommand(input);
+    const response = await client.send(command);
+    console.log('res====', response);
   }
 }
