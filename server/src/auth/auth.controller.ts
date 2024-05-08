@@ -9,7 +9,6 @@ import {
   Res,
   Req,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpRequestDto } from './dto/signup-request.dto';
@@ -21,15 +20,17 @@ import { Response, Request } from 'express';
 import { DogOwnerService } from '@Src/dog-owner/dog-owners.service';
 import { extractValueFromCookie } from './utils/httpUtils';
 import { COGNITO_KEY, REFRESH_TOKEN_KEY } from 'constants/cookies';
-import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
 import { fetchUsersFromCognitoPool } from './utils/cognito';
 import { ERROR_CODES } from 'constants/errorCodes';
+import { ChangeEmailDto } from './dto/change-email.dto';
+import { PrismaService } from '@Src/prisma/prisma.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
     private dogOwnerService: DogOwnerService,
+    private prisma: PrismaService,
   ) {}
 
   @HttpCode(HttpStatus.OK)
@@ -69,11 +70,12 @@ export class AuthController {
       return ERROR_CODES.EXPIRED_USER_ERROR;
     }
     console.log(targetOwner);
-    const isVerifySucceeded = await this.authService.verifyCode(params);
+    const isVerifySucceeded =
+      await this.authService.confirmRegistration(params);
     console.log('isVeryfySucceeded', isVerifySucceeded);
     // dogOwnerテーブルからも削除する(unregisteredAtを現在時刻にする)
     // 認証期限が過ぎています。さいど作成しなおしてくださいという旨のメールを返す
-    // 見つからなかった場合、this.authService.verifyCode(params)を返す
+    // 見つからなかった場合、this.authService.confirmRegistration(params)を返す
     if (isVerifySucceeded === 'SUCCESS') {
       const user = await fetchUsersFromCognitoPool(params.email);
       const cognitoSub = user[0]['Username'];
@@ -172,6 +174,49 @@ export class AuthController {
       // })
     } catch (e) {
       throw new BadRequestException(e.message);
+    }
+  }
+
+  @Post('change-email')
+  async changeEmail(
+    @Res() response: Response,
+    @Body() changeEmailRequest: ChangeEmailDto,
+  ) {
+    const existedUser = await fetchUsersFromCognitoPool(
+      changeEmailRequest.newEmail,
+    );
+    if (existedUser.length) {
+      return response
+        .status(HttpStatus.OK)
+        .send('ご使用になれないメールアドレスです');
+    }
+    // verify code
+    // if success
+    try {
+      const result =
+        await this.dogOwnerService.updateOwnerInfo(changeEmailRequest);
+
+      // 該当オーナーが存在しない場合は、メールを更新させない
+      if (result === 'NO_OWNER_FOUND') {
+        return response.status(HttpStatus.NOT_FOUND).send(result);
+      }
+      await this.authService.changeCognitoEmail(changeEmailRequest);
+      return response.status(HttpStatus.OK).send(result);
+    } catch (error) {
+      console.log('error', error);
+      throw new Error(error);
+    }
+  }
+
+  @Post('verify-email')
+  async veryfyEmail(@Body() params: VeirfyRequestDto) {
+    console.log('^^');
+    try {
+      const isVerifySucceeded =
+        await this.authService.confirmEmailChange(params);
+      console.log('isSucceeded', isVerifySucceeded);
+    } catch (error) {
+      console.log('error', error);
     }
   }
 }

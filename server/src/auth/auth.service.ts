@@ -71,12 +71,13 @@ export class AuthService {
   }
 
   // 成功した場合にcognitoのEmail verifiedをYesにする
-  async verifyCode(verifyParam: VeirfyRequestDto) {
+  async confirmRegistration(verifyParam: VeirfyRequestDto) {
     const { email, token } = verifyParam;
     const userData = {
       Username: email,
       Pool: this.userPool,
     };
+    console.log('====', email, token);
     const cognitoUser = new CognitoUser(userData);
 
     return new Promise((resolve, reject) => {
@@ -90,6 +91,74 @@ export class AuthService {
           resolve(result);
         },
       );
+    });
+  }
+
+  //TODO:  成功した場合にcognitoのEmail verifiedをYesにする
+  async confirmEmailChange(verifyParam: VeirfyRequestDto) {
+    const { email, token } = verifyParam;
+    const userData = {
+      Username: email,
+      Pool: this.userPool,
+    };
+    console.log('====', email, token);
+    const cognitoUser = new CognitoUser(userData);
+    const authenticationDetails = new AuthenticationDetails({
+      Username: email,
+    });
+    console.log(cognitoUser.getUserAttributes);
+    console.log(authenticationDetails);
+    try {
+      await this.authenticateUser(cognitoUser, authenticationDetails);
+
+      const result = await this.verifyUserAttribute(cognitoUser, token);
+      console.log('Verification process complete:', result);
+    } catch (error) {
+      console.error('error:', error);
+    }
+
+    // return new Promise((resolve, reject) => {
+    //   cognitoUser.authenticateUser(authenticationDetails, {
+    //     onSuccess: () => {
+    //       cognitoUser.verifyAttribute('email', token, {
+    //         onSuccess(result) {
+    //           console.log('Email verification successful:', result);
+    //           resolve(result);
+    //         },
+    //         onFailure(err) {
+    //           console.error('Email verification failed:', err);
+    //           reject(err);
+    //         },
+    //       });
+    //     },
+    //     onFailure: (err) => {
+    //       reject(err);
+    //     },
+    //   });
+    // });
+  }
+
+  authenticateUser(cognitoUser, authenticationDetails) {
+    return new Promise((resolve, reject) => {
+      cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: resolve,
+        onFailure: reject,
+      });
+    });
+  }
+
+  verifyUserAttribute(cognitoUser, token) {
+    return new Promise((resolve, reject) => {
+      cognitoUser.verifyAttribute('email', token, {
+        onSuccess: (result) => {
+          console.log('Email verification successful:', result);
+          resolve(result);
+        },
+        onFailure: (err) => {
+          console.error('Email verification failed:', err);
+          reject(err);
+        },
+      });
     });
   }
 
@@ -323,26 +392,40 @@ export class AuthService {
   }
 
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/AdminUpdateUserAttributesCommand/
-  async changeCognitoEmail({ newEmail }: { newEmail: string }) {
-    // cognitoUserPoolからユーザーを削除
+  async changeCognitoEmail({
+    email,
+    newEmail,
+  }: {
+    email: string;
+    newEmail: string;
+  }) {
+    // cognitoUserPoolいる
     const input = {
       UserPoolId: this.userPool.getUserPoolId(),
-      Username: 'username',
+      Username: email,
       UserAttributes: [
         {
           Name: 'email',
           Value: newEmail,
         },
         {
+          Name: 'name',
+          Value: newEmail,
+        },
+        {
           Name: 'email_verified',
-          Value: 'false',
+          Value: 'true',
         },
       ],
     };
 
     const client = new CognitoIdentityProvider({ region: 'ap-northeast-1' });
     const command = new AdminUpdateUserAttributesCommand(input);
-    const response = await client.send(command);
-    console.log('res====', response);
+    try {
+      const res = await client.send(command);
+      console.log('update succeeded', res);
+    } catch (error) {
+      console.log('update failed');
+    }
   }
 }
