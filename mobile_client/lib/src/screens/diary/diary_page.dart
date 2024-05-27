@@ -4,6 +4,7 @@ import 'package:mobile_client/src/contexts/app_state.dart';
 import 'package:mobile_client/src/models/diary.dart';
 import 'package:mobile_client/src/route/route.dart';
 import 'package:mobile_client/src/screens/diary/create_diary_page.dart';
+import 'package:mobile_client/src/widgets/diary/diary_wrapper.dart';
 import 'dart:convert';
 
 import 'package:mobile_client/src/widgets/image_from_s3.dart';
@@ -13,6 +14,25 @@ import 'package:provider/provider.dart';
 class DiaryPage extends StatefulWidget {
   @override
   State<DiaryPage> createState() => _DiaryPageState();
+}
+
+class DiaryList extends StatelessWidget {
+  final List<Diary> diaries;
+  final Function(Diary) onTap;
+  DiaryList({required this.diaries, required this.onTap});
+  @override
+  Widget build(BuildContext context) {
+    print(diaries);
+    return ListView.builder(
+      itemCount: diaries.length,
+      itemBuilder: (context, index) {
+        return DiaryComponent(
+          diary: diaries[index],
+          onTap: (diary) => onTap(diary),
+        );
+      },
+    );
+  }
 }
 
 //
@@ -61,41 +81,25 @@ class _DiaryPageState extends State<DiaryPage> {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text('日記'),
-          ),
-          // ElevatedButton(onPressed: fetchDiaryAndSet, child: Text('取得する')),
-          if (diaries.isEmpty)
-            Text('日記がありません')
-          else
-            ...diaries
-                .map((diary) => GestureDetector(
-                      onTap: () {
-                        appState.navigateTo(routeDiaryDetail, oneRecord: diary);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => DiaryShowPage(diary: diary),
-                        //   ),
-                        // );
-                      },
-                      child: Column(
-                        children: [
-                          Text(diary.description),
-                          SizedBox(
-                            height: 200,
-                            child: ImageFromS3(
-                                imagePath: diary.coverImagePath ??
-                                    "default-dog-img.png"),
-                          ),
-                        ],
-                      ),
-                    ))
-                .toList()
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Text('日記'),
+            SizedBox(height: 20),
+            if (diaries.isEmpty)
+              Text('日記がありません')
+            else
+              Expanded(
+                child: DiaryList(
+                  diaries: diaries,
+                  onTap: (diary) {
+                    appState.navigateTo(routeDiaryDetail, oneRecord: diary);
+                  },
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
