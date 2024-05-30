@@ -2,6 +2,8 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_client/src/route/route.dart';
 import 'package:mobile_client/src/screens/auth/login.dart';
+import 'package:mobile_client/src/screens/auth/signup.dart';
+import 'package:mobile_client/src/screens/auth/verify_code.dart';
 import 'package:mobile_client/src/screens/contact.dart';
 import 'package:mobile_client/src/screens/diary/create_diary_page.dart';
 import 'package:mobile_client/src/screens/diary/diary_page.dart';
@@ -56,6 +58,10 @@ class AppState extends ChangeNotifier {
         currentPage = DiaryPage();
       case routeLogin:
         currentPage = LoginPage();
+      case routeSignUp:
+        currentPage = SignUpPage();
+      case routeVerifyCode:
+        currentPage = VerifyCodePage();
       case routeCreateDiaries:
         currentPage = RequireLoginProvider(child: DiaryCreatePage());
       case routeContact:
