@@ -9,6 +9,7 @@ import {
   Res,
   Req,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpRequestDto } from './dto/signup-request.dto';
@@ -24,6 +25,7 @@ import { fetchUsersFromCognitoPool } from './utils/cognito';
 import { ERROR_CODES } from 'constants/errorCodes';
 import { ChangeEmailDto } from './dto/change-email.dto';
 import { PrismaService } from '@Src/prisma/prisma.service';
+import { JwtAuthGuard } from '@Src/guards/jwd-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -93,6 +95,11 @@ export class AuthController {
   async isLoggedIn(@Res() res: Response) {
     const isLoggedIn = await this.authService.loggedIn();
     return res.status(HttpStatus.OK).send(isLoggedIn);
+  }
+
+  @Post('logout')
+  async signOut(@Body() params: { email: string }) {
+    return await this.authService.signOut(params.email);
   }
 
   @Post('change-password')
@@ -178,6 +185,7 @@ export class AuthController {
   }
 
   @Post('change-email')
+  @UseGuards(JwtAuthGuard)
   async changeEmail(
     @Res() response: Response,
     @Body() changeEmailRequest: ChangeEmailDto,
@@ -193,15 +201,15 @@ export class AuthController {
     // verify code
     // if success
     try {
-      const result =
-        await this.dogOwnerService.updateOwnerInfo(changeEmailRequest);
+      // const result =
+      //   await this.dogOwnerService.updateOwnerInfo(changeEmailRequest);
 
-      // 該当オーナーが存在しない場合は、メールを更新させない
-      if (result === 'NO_OWNER_FOUND') {
-        return response.status(HttpStatus.NOT_FOUND).send(result);
-      }
-      await this.authService.changeCognitoEmail(changeEmailRequest);
-      return response.status(HttpStatus.OK).send(result);
+      // // 該当オーナーが存在しない場合は、メールを更新させない
+      // if (result === 'NO_OWNER_FOUND') {
+      //   return response.status(HttpStatus.NOT_FOUND).send(result);
+      // }
+      const res = await this.authService.changeCognitoEmail(changeEmailRequest);
+      return response.status(HttpStatus.OK).send(res);
     } catch (error) {
       console.log('error', error);
       throw new Error(error);
@@ -209,11 +217,17 @@ export class AuthController {
   }
 
   @Post('verify-email')
-  async veryfyEmail(@Body() params: VeirfyRequestDto) {
-    console.log('^^');
+  @UseGuards(JwtAuthGuard)
+  async veryfyEmail(@Req() req: Request, @Body() params: VeirfyRequestDto) {
+    console.log('^^', req.header);
+    console.log('^^', req.headers.authorization);
+    const accessToken = req.headers.authorization.split(' ')[1];
     try {
-      const isVerifySucceeded =
-        await this.authService.confirmEmailChange(params);
+      const isVerifySucceeded = await this.authService.confirmEmailChange(
+        params,
+        accessToken,
+        // 'eyJraWQiOiJveHNtU2VEbUdTam9jQ2crdkthNlZRbjBuR0RldmdJck50dVB0WldBVVVvPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkYTczNmRkMi0xZDdkLTQ1OWUtOGIwYi1jZjBhZTJkZTYwODMiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtbm9ydGhlYXN0LTEuYW1hem9uYXdzLmNvbVwvYXAtbm9ydGhlYXN0LTFfVXFOTzZPU2w1IiwiY2xpZW50X2lkIjoiNDI1c2V0a2h0aTYxM29mbWxxOHAzMmwxNW0iLCJvcmlnaW5fanRpIjoiN2YzNTE1NjctOWRkZS00ZWQ3LWFkY2MtZTAxZDgxNmU2OWJlIiwiZXZlbnRfaWQiOiIxODdjMzUxYi05MDcxLTQwNzUtYTMxMC0zNjZlNWQwMmNhOGIiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNzE1NTU3MTcxLCJleHAiOjE3MTU1NjA3NzEsImlhdCI6MTcxNTU1NzE3MSwianRpIjoiYWZkY2YwYTQtNDNkMy00MmVmLWJhZjMtYWNjZGFlMzUxYmE1IiwidXNlcm5hbWUiOiJkYTczNmRkMi0xZDdkLTQ1OWUtOGIwYi1jZjBhZTJkZTYwODMifQ.JpddT6eytfLcTAzkEOhCd4bOW0iHUkQVnU7yLg11b3Tx_dNFrqn1j050NwXNfrQY9PWMsDqZpnUABoFsLuIsUIo-3cJhW5pRAdai_sc3lZLhQE-tsBz55BYS0mQ5eWLXqaUOHohFsapcwc3Hyu0rsQMFSxET-ybdMoDW57Mb5w8pYmb02O3NoPUnLMYBKyDdiWmh3tUdbCWFHSiqHTaBlvDVRFzGFVWTfPe_eci-oGPbjVNSEp4M4ZbzfFgNfYHMLeN-6gDriejmdmnPdZgtSmizAY9hd9w3tkY2cnj_SlFPfQBB9kvw1oPGzPenkGzAeRAADo7jYATGzL14kqymAw',
+      );
       console.log('isSucceeded', isVerifySucceeded);
     } catch (error) {
       console.log('error', error);

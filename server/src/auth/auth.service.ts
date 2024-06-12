@@ -7,6 +7,10 @@ import {
   CognitoUserPool,
   CognitoUserSession,
 } from 'amazon-cognito-identity-js';
+import {
+  VerifyUserAttributeCommand,
+  CognitoIdentityProviderClient,
+} from '@aws-sdk/client-cognito-identity-provider';
 import { ConfigService } from '@nestjs/config';
 import { SignUpRequestDto } from './dto/signup-request.dto';
 import { fetchUsersFromCognitoPool } from './utils/cognito';
@@ -21,6 +25,7 @@ import {
   AdminDeleteUserCommand,
   AdminUpdateUserAttributesCommand,
   CognitoIdentityProvider,
+  AdminUserGlobalSignOutCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 
 @Injectable()
@@ -95,24 +100,71 @@ export class AuthService {
   }
 
   //TODO:  成功した場合にcognitoのEmail verifiedをYesにする
-  async confirmEmailChange(verifyParam: VeirfyRequestDto) {
+  async confirmEmailChange(verifyParam: VeirfyRequestDto, accessToken: string) {
     const { email, token } = verifyParam;
     const userData = {
       Username: email,
       Pool: this.userPool,
     };
-    console.log('====', email, token);
+    console.log('====', email, token, accessToken);
+    const client = new CognitoIdentityProviderClient(userData);
+    const input = {
+      AccessToken: accessToken, // required
+      // AccessToken:
+      // required
+      AttributeName: email, // required
+      Code: token, // required
+    };
+    const command = new VerifyUserAttributeCommand(input);
+    console.log('comand====,', command);
+    console.log('client====', client);
     const cognitoUser = new CognitoUser(userData);
-    const authenticationDetails = new AuthenticationDetails({
-      Username: email,
-    });
-    console.log(cognitoUser.getUserAttributes);
-    console.log(authenticationDetails);
+    // console.log(cognitoUser);
+    // const authenticationDetails = new AuthenticationDetails({
+    //   Username: email,
+    // });
+    // console.log(cognitoUser.getUserAttributes);
+    // console.log(authenticationDetails);
+    // const input = {
+    //   UserPoolId: this.userPool.getUserPoolId(),
+    //   Username: email,
+    //   UserAttributes: [
+    //     {
+    //       Name: 'email',
+    //       Value: email,
+    //     },
+    //     {
+    //       Name: 'email_verified',
+    //       Value: 'true',
+    //     },
+    //   ],
+    // };
+    // const client = new CognitoIdentityProvider({ region: 'ap-northeast-1' });
+    // const command = new AdminUpdateUserAttributesCommand(input);
     try {
-      await this.authenticateUser(cognitoUser, authenticationDetails);
+      // await client.send(command);
+      console.log('after sent');
+      // await this.authenticateUser(cognitoUser, authenticationDetails);
+      // return new Promise((resolve, reject) => {
+      const response = await client.send(command); // console.log(
+      console.log('===', response);
 
-      const result = await this.verifyUserAttribute(cognitoUser, token);
-      console.log('Verification process complete:', result);
+      //   //   '=====',
+      //   //   new AuthenticationDetails({ Username: email }).getPassword(),
+      //   // );
+      //   cognitoUser.verifyAttribute('email', token, {
+      //     onSuccess: (result) => {
+      //       console.log('Email verification successful:', result);
+      //       resolve(result);
+      //     },
+      //     onFailure: (err) => {
+      //       console.error('Email verification failed:', err);
+      //       reject(err);
+      //     },
+      //   });
+      // });
+      // const result = await this.verifyUserAttribute(cognitoUser, token);
+      // console.log('Verification process complete:', result);
     } catch (error) {
       console.error('error:', error);
     }
@@ -145,6 +197,29 @@ export class AuthService {
         onFailure: reject,
       });
     });
+  }
+
+  async signOut(email: string) {
+    const adminUserGlobalSignOutCommandInput = {
+      UserPoolId: this.userPool.getUserPoolId(),
+      Username: email,
+    };
+    const client = new CognitoIdentityProvider({ region: 'ap-northeast-1' });
+    const command = new AdminUserGlobalSignOutCommand(
+      adminUserGlobalSignOutCommandInput,
+    );
+    try {
+      const adminUserGlobalSignOutCommandResults = await client.send(command);
+      console.log(
+        'adminUserGlobalSignOutCommandResults',
+        adminUserGlobalSignOutCommandResults,
+      );
+      console.log('User signed out successfully');
+      return true;
+    } catch (err) {
+      console.error('Sign out failed:', err);
+      throw err;
+    }
   }
 
   verifyUserAttribute(cognitoUser, token) {
@@ -391,6 +466,11 @@ export class AuthService {
     }
   }
 
+  // メールをおくる関数を作成
+  // async sendCode({email, newEmail}: {}){
+
+  // }
+
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/command/AdminUpdateUserAttributesCommand/
   async changeCognitoEmail({
     email,
@@ -414,7 +494,7 @@ export class AuthService {
         },
         {
           Name: 'email_verified',
-          Value: 'true',
+          Value: 'false',
         },
       ],
     };
