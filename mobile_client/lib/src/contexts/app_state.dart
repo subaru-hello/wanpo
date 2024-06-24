@@ -21,6 +21,7 @@ class AppState extends ChangeNotifier {
   // 変数を定義
   var current = WordPair.random();
   var favorites = <WordPair>[];
+
   late Widget currentPage = TopPage();
   // 結合させた値のゲッター
   List<String> get wordCombined =>
