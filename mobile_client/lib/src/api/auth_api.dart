@@ -80,17 +80,93 @@ Future login({required String email, required String password}) async {
       print('sub $sub');
       print('refresh $refresh');
     }
+    return true;
   } else {
     print('Failed to login');
     return false;
   }
 }
 
+Future signUp({required String email, required String password}) async {
+  const jwtTokenKey = 'jwtToken';
+  const cognitoSubKey = 'cognitoSub';
+  const refreshTokenKey = 'refreshToken';
+  final response = await http.post(
+    loginUrl,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      // 'Cookie': 'test=test;'
+    },
+    body: json.encode({
+      'email': email,
+      'password': password,
+    }),
+  );
+  if (response.statusCode == HttpStatus.ok) {
+    // "Set-Cookie"ヘッダーからCookieを取得
+    String? cookie = response.headers['set-cookie'];
+    if (cookie != null) {
+      await parseCookies(cookie);
+      final token = await SecureTokenStorage.getStorageValue(jwtTokenKey);
+      final sub = await SecureTokenStorage.getStorageValue(cognitoSubKey);
+      final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
+      final cookieHeader =
+          'jwtToken=$token; refreshToken=$refresh; cognitoSub=$sub';
+      await SecureTokenStorage.saveToken('cookie', cookieHeader);
+      print('response cookie');
+      print('token $token');
+      print('sub $sub');
+      print('refresh $refresh');
+    }
+    return true;
+  } else {
+    print('Failed to Sign Up');
+    return false;
+  }
+}
+
+Future verifyCode({required int verifyCode}) async {
+  const jwtTokenKey = 'jwtToken';
+  // const refreshTokenKey = 'refreshToken';
+  final jwt = await SecureTokenStorage.getStorageValue(jwtTokenKey);
+  final response = await http.post(
+    loginUrl,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Cookie': '$jwtTokenKey=$jwt'
+    },
+    body: json.encode({
+      'verifyCode': verifyCode,
+    }),
+  );
+  if (response.statusCode == HttpStatus.ok) {
+    // "Set-Cookie"ヘッダーからCookieを取得
+    String? cookie = response.headers['set-cookie'];
+    if (cookie != null) {
+      await parseCookies(cookie);
+      final token = await SecureTokenStorage.getStorageValue(jwtTokenKey);
+      final sub = await SecureTokenStorage.getStorageValue(cognitoSubKey);
+      final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
+      final cookieHeader =
+          'jwtToken=$token; refreshToken=$refresh; cognitoSub=$sub';
+      await SecureTokenStorage.saveToken('cookie', cookieHeader);
+      print('response cookie');
+      print('token $token');
+      print('sub $sub');
+      print('refresh $refresh');
+    }
+    return true;
+  } else {
+    print('Failed to verify code');
+    return false;
+  }
+}
+
 Future isLoggedIn() async {
   // refreshTokenでアクセスをリフレッシュする
-  final hasSucceededRefreshing = await refreshAccessToken();
+  await refreshAccessToken();
   final hasCurrentLoggedIn = await checkCurrentLogin();
-  if (!hasSucceededRefreshing || !hasCurrentLoggedIn) {
+  if (!hasCurrentLoggedIn) {
     print("LOGIN_REQUIRED");
     return false;
   }
@@ -152,6 +228,29 @@ Future checkCurrentLogin() async {
   if (response.statusCode != HttpStatus.ok) {
     return false;
   } else {
+    return true;
+  }
+}
+
+Future logout() async {
+  final sub = await SecureTokenStorage.getStorageValue(cognitoSubKey);
+  final token = await SecureTokenStorage.getStorageValue(jwtTokenKey);
+  final refresh = await SecureTokenStorage.getStorageValue(refreshTokenKey);
+  final cookieHeader =
+      'jwtToken=$token; refreshToken=$refresh; cognitoSub=$sub';
+
+  final response = await http.post(
+    logoutUrl,
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Cookie': cookieHeader
+    },
+  );
+
+  if (response.statusCode != HttpStatus.ok) {
+    return false;
+  } else {
+    print("logout success");
     return true;
   }
 }
