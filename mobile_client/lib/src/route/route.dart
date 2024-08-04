@@ -12,6 +12,7 @@ const routeWalkEntryCreate = '/walk-entries/$createPath';
 // /** Auth */
 const routeLogin = '/login';
 const routeSignUp = '/sign-up';
+const routeVerifyCode = '/verify-code';
 
 // /** Terms */
 const routeProfile = '/profile';

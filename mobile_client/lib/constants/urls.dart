@@ -25,6 +25,8 @@ Uri getWalkEntryUrl(String? diaryId) {
 final Uri walkEntryUrl = buildUri("walk-entries");
 final Uri diaryUrl = buildUri("diaries");
 final Uri loginUrl = buildUri("auth/login");
+final Uri verifyCodeUrl = buildUri("auth/verify");
+final Uri signUpUrl = buildUri("auth/sign-up");
 final Uri refreshAccessTokenUrl = buildUri("auth/refresh-access-token");
 final Uri checkLoggedInUrl = buildUri("auth/is-logged-in");
 final Uri logoutUrl = buildUri("auth/logout");

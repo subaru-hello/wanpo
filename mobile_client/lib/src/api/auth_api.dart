@@ -82,7 +82,7 @@ Future login({required String email, required String password}) async {
 
 Future signUp({required String email, required String password}) async {
   final response = await http.post(
-    loginUrl,
+    signUpUrl,
     headers: <String, String>{
       'Content-Type': 'application/json',
       // 'Cookie': 'test=test;'
@@ -107,17 +107,15 @@ Future signUp({required String email, required String password}) async {
   }
 }
 
-Future verifyCode({required int verifyCode}) async {
+Future verifyCode({required String verifyCode, required String email}) async {
   final jwt = await SecureTokenStorage.getStorageValue(jwtTokenKey);
   final response = await http.post(
-    loginUrl,
+    verifyCodeUrl,
     headers: <String, String>{
       'Content-Type': 'application/json',
       'Cookie': '$jwtTokenKey=$jwt'
     },
-    body: json.encode({
-      'verifyCode': verifyCode,
-    }),
+    body: json.encode({'token': verifyCode, 'email': email}),
   );
   if (response.statusCode == HttpStatus.ok) {
     // "Set-Cookie"ヘッダーからCookieを取得
