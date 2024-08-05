@@ -51,6 +51,11 @@ class _SignUpState extends State<SignUpPage> {
     );
   }
 
+  void transitionToLogin() {
+    var appState = Provider.of<AppState>(context, listen: false);
+    appState.navigateTo(routeLogin);
+  }
+
   Future submitForm() async {
     if (_formKey.currentState!.validate()) {
       var appState = Provider.of<AppState>(context,
@@ -60,6 +65,7 @@ class _SignUpState extends State<SignUpPage> {
 
       if (loginRes) {
         print("succeeded!");
+        appState.tempEmailRetain(email: email);
         appState.navigateTo(routeVerifyCode);
       } else {
         if (mounted) {
@@ -75,16 +81,28 @@ class _SignUpState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(title: Text('新規登録')),
       body: Center(
-        child: Card(
+        child: Container(
           margin: EdgeInsets.all(16.0),
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: SignUpForm(
-              formKey: _formKey,
-              onEmailSaved: _handleEmailSaved,
-              onPasswordSaved: _handlePasswordSaved,
-              onSubmitForm: submitForm,
-            ),
+          child: Column(
+            children: [
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: SignUpForm(
+                    formKey: _formKey,
+                    onEmailSaved: _handleEmailSaved,
+                    onPasswordSaved: _handlePasswordSaved,
+                    onSubmitForm: submitForm,
+                  ),
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: TextButton(
+                    onPressed: () => transitionToLogin(),
+                    child: Text('ログインはこちら'),
+                  ))
+            ],
           ),
         ),
       ),
